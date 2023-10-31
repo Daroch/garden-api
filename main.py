@@ -24,4 +24,10 @@ def root():
 def get_plants(db: Session = Depends(get_db)):
   return crud.get_plants(db)
   
-  
+@app.get('/api/plants/{id}')
+def get_plant_by_id(id, db: Session = Depends(get_db)):
+  plant_by_id = crud.get_plant_by_id(db=db, id=id)
+  if (plant_by_id and plant_by_id!={}):
+    return plant_by_id
+  else:
+    raise HTTPException(status_code=404, detail='Plant not found')
