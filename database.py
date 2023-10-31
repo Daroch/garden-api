@@ -14,5 +14,5 @@ URL_CONNECTION = '{}://{}:{}@{}/{}'.format(DB_DIALECT,DB_USER,DB_PASSWORD,DB_HOS
 engine = create_engine(URL_CONNECTION)
 localSession = sessionmaker(autoflush=False,autocommit=False,bind=engine)
 
-Base = declarative_base
+Base = declarative_base()
 print('hola')

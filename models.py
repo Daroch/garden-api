@@ -8,4 +8,4 @@ class Plant(Base):
   id = Column(Integer, primary_key=True, index=True)
   name = Column(String(30), index=True)
   description = Column(String(300))
-  publish = Column(bool)
+  publish = Column(Boolean, default=False)
