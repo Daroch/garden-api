@@ -6,6 +6,7 @@ from database import engine, localSession
 from schemas import PlantData, PlantId
 from models import Base
 
+Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
 
