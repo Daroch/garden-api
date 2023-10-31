@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
 from models import Plant
-from schema import PlantData
+from schemas import PlantData
 
 def get_plants(db: Session):
    return db.query(Plant).all()
