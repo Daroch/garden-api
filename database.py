@@ -9,10 +9,10 @@ DB_PASSWORD=os.getenv('DB_PASSWORD')
 DB_DIALECT=os.getenv('DB_DIALECT')
 DB_USER=os.getenv('DB_USER')
 
-print(os.getenv('SPAM'))
-URL_CONNECTION = '{DB_DIALECT}://{DB_USER}:{DB_PASSWORD}@{DB_HOST}/{DB_NAME}'
+print(os.getenv('DB_DIALECT'))
+URL_CONNECTION = '{}://{}:{}@{}/{}'.format(DB_DIALECT,DB_USER,DB_PASSWORD,DB_HOST,DB_NAME)
 engine = create_engine(URL_CONNECTION)
-localSession = sessionmaker(autoflush=false,autocommit=false,bind=engine)
+localSession = sessionmaker(autoflush=False,autocommit=False,bind=engine)
 
 Base = declarative_base
 print('hola')
