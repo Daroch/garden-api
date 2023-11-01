@@ -10,7 +10,7 @@ Cada plantra tendrá una ficha con información básica que podemos editar, así
 
 El sistema enviará avisos (Desktop notifications) al usuario relativos a distintos eventos cada “x” dias, en función de la frecuencia que hallamos configurado para una planta y ese evento determinado:
 Ejemplos:
-Aviso de riego, de abonado, de antiplagas, de siembre, de recolección, de epoca de trasnplante.
+Aviso de riego, de abonado, de antiplagas, de siembra, de recolección, de epoca de trasnplante.
 
 - funcion que calcula los dias desde el ultimo riego/abonado/evento y envia un aviso, en principio sería una notificación en el navegador,
 
@@ -22,15 +22,6 @@ Aviso de riego, de abonado, de antiplagas, de siembre, de recolección, de epoca
 - Mapa ubicaciones: si la planta tiene introducidas coordenadas de ubicación, podria usarse para añadir árboles (o setas) y posicionarlos en un mapa.
 
 ---
-### UML DIAGRAMS
-**Use Case**
-![Use Case](<images/plants manager Use Case diagram.png>)
-
-**Activity Diagram**
-![Alt text](<images/Garden App Activity diagram.png>)
-
-**Class Diagram**
-![Alt text](<images/Garden Manager Class diagram.png>)
 
 ### Tecnologías a utilizar:
 
@@ -60,3 +51,14 @@ Best practiques
 - Software (Vscode, MySQLWorkbench, Modelio)
 - Code Quality (Vscode plugins ESLINT, prettier)
 - UML Diagrams with Modelio
+
+---
+### UML DIAGRAMS
+**Use Case**
+![Use Case](<images/plants manager Use Case diagram.png>)
+
+**Activity Diagram**
+![Alt text](<images/Garden App Activity diagram.png>)
+
+**Class Diagram**
+![Alt text](<images/Garden Manager Class diagram.png>)
