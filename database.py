@@ -12,7 +12,7 @@ DB_USER=os.getenv('DB_USER')
 print(os.getenv('DB_DIALECT'))
 URL_CONNECTION = '{}://{}:{}@{}/{}'.format(DB_DIALECT,DB_USER,DB_PASSWORD,DB_HOST,DB_NAME)
 engine = create_engine(URL_CONNECTION)
-localSession = sessionmaker(autoflush=False,autocommit=False,bind=engine)
+SessionLocal = sessionmaker(autoflush=False,autocommit=False,bind=engine)
 
 Base = declarative_base()
 print('hola')
