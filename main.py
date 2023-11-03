@@ -13,7 +13,7 @@ def get_db():
     yield db
   finally:
     db.close()
-    
+
 @app.get('/')
 def root():
     return 'Hello, I am FastAPI'
@@ -39,12 +39,19 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
 
 @app.post("/users/{user_id}/plants/", response_model=schemas.Plant)
 def create_plant_for_user(
-    user_id: int, plant: schemas.PlantCreate, db: Session = Depends(get_db)
+    user_id: int, category_id: int, plant: schemas.PlantCreate, db: Session = Depends(get_db)
 ):
-    return crud.create_user_plant(db=db, plant=plant, user_id=user_id)
+    return crud.create_user_plant(db=db, plant=plant, user_id=user_id, category_id=category_id)
 
 
-@app.get("/plants/", response_model=list[schemas.Plant])
-def read_plants(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    plants = crud.get_plants(db, skip=skip, limit=limit)
-    return plants
+@app.get("/categories/", response_model=list[schemas.Category])
+def read_categories(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    categories = crud.get_categories(db, skip=skip, limit=limit)
+    return categories
+
+@app.post("/categories/", response_model=schemas.Category)
+def create_category(category: schemas.CategoryCreate, db: Session = Depends(get_db)):
+    db_category = crud.get_category_by_name(db, name=category.name)
+    if db_category:
+        raise HTTPException(status_code=400, detail="category already exists")
+    return crud.create_category(db=db, category=category)

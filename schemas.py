@@ -11,10 +11,28 @@ class PlantCreate(PlantBase):
 class Plant(PlantBase):
     id: int
     owner_id: int
+    category_id: int
 
     class Config:
         from_attributes = True
-  
+
+
+
+class CategoryBase(BaseModel):
+    name: str
+    description: str | None = None
+
+class CategoryCreate(CategoryBase):
+    pass
+
+class Category(CategoryBase):
+    id: int
+    plants: list[Plant] = []
+
+    class Config:
+        from_attributes = True
+
+
 
 class UserBase(BaseModel):
     email: str
