@@ -16,8 +16,8 @@ class Plant(Base):
   
   id = Column(Integer, primary_key=True, index=True)
   name = Column(String(30), index=True)
-  description = Column(String(300))
-  publish = Column(Boolean, default=False)
+  description = Column(String(300), index=True)
+  public = Column(Boolean, default=False)
   owner_id = Column(Integer, ForeignKey("users.id"))
   
   owner = relationship("User", back_populates="plants")

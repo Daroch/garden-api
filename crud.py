@@ -23,9 +23,16 @@ def create_user(db: Session, user: schemas.UserCreate):
     db.refresh(db_user)
     return db_user
   
-def get_plants(db: Session):
-   return db.query(Plant).all()
- 
+def get_plants(db: Session, skip: int = 0, limit: int = 100):
+   return db.query(Plant).offset(skip).limit(limit).all()
+
+def create_user_plant(db: Session, plant: schemas.PlantCreate, user_id: int):
+    db_new_plant = models.Plant(**plant.dict(), owner_id=user_id)
+    db.add(db_new_plant)
+    db.commit()
+    db.refresh(db_new_plant)
+    return db_new_plant
+
 def get_plant_by_id(db: Session, id: int):
   return db.query(Plant).filter(Plant.id == id)
 

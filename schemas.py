@@ -14,11 +14,18 @@ class User(UserBase):
     class Config:
         orm_mode = True
         
-class PlantData(BaseModel):
-  name: str
-  description: str
-  publish: bool
+class PlantBase(BaseModel):
+    name: str
+    description: str | None = None
+    public: bool
 
-class PlantId(PlantData):
-  id: int
+class PlantCreate(PlantBase):
+    pass
+
+class Plant(PlantBase):
+    id: int
+    owner_id: int
+
+    class Config:
+        orm_mode = True
   

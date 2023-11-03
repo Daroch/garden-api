@@ -39,6 +39,18 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="User not found")
     return db_user
 
+@app.post("/users/{user_id}/plants/", response_model=schemas.Plant)
+def create_item_for_user(
+    user_id: int, plants: schemas.PlantCreate, db: Session = Depends(get_db)
+):
+    return crud.create_user_plant(db=db, plants=plant, user_id=user_id)
+
+
+@app.get("/plants/", response_model=list[schemas.Plant])
+def read_plants(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    plants = crud.get_plants(db, skip=skip, limit=limit)
+    return plants
+
 
 @app.get('/api/plants', response_model=list[PlantId])
 def get_plants(db: Session = Depends(get_db)):
