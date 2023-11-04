@@ -4,6 +4,8 @@ class PlantBase(BaseModel):
     name: str
     description: str | None = None
     public: bool
+    irrigation_type: str
+    light_type: str
 
 class PlantCreate(PlantBase):
     pass

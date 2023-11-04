@@ -24,6 +24,20 @@ class Category(Base):
   plants = relationship("Plant", back_populates="category")
 
 
+class LevelType(str, Enum):
+    muypoca = "muy poca"
+    poca = "poca"
+    bastante = "bastante"
+    mucha = "mucha"
+
+class IrrigationType(LevelType):
+  pass
+
+class LightType(LevelType):
+  pass
+
+
+
 class Plant(Base):
   __tablename__ = 'plants'
 
@@ -33,6 +47,8 @@ class Plant(Base):
   public = Column(Boolean, default=False)
   owner_id = Column(Integer, ForeignKey("users.id"))
   category_id = Column(Integer, ForeignKey("categories.id"))
+  irrigation_type = Column(IrrigationType)
+  light_type = Column(LightType)
 
   owner = relationship("User", back_populates="plants")
   category = relationship("Category", back_populates="plants")
