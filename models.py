@@ -25,8 +25,9 @@ class Category(Base):
 
 
 class LevelType(str, Enum):
-    muypoca = "muy poca"
+    muypoca = "muypoca"
     poca = "poca"
+    normal = "normal"
     bastante = "bastante"
     mucha = "mucha"
 
@@ -47,8 +48,8 @@ class Plant(Base):
   public = Column(Boolean, default=False)
   owner_id = Column(Integer, ForeignKey("users.id"))
   category_id = Column(Integer, ForeignKey("categories.id"))
-  irrigation_type = Column(IrrigationType)
-  light_type = Column(LightType)
+  irrigation_type = Column(Enum('muypoca','poca','normal','bastante','mucha'), name='irrigation_type', nullable= False, default=IrrigationType.muypoca)
+  light_type = Column(Enum('muypoca','poca','normal','bastante','mucha'), name='light_type', nullable= False, default=LightType.muypoca)
 
   owner = relationship("User", back_populates="plants")
   category = relationship("Category", back_populates="plants")

@@ -1,11 +1,12 @@
 from pydantic import BaseModel
+import models
 
 class PlantBase(BaseModel):
     name: str
     description: str | None = None
     public: bool
-    irrigation_type: str
-    light_type: str
+    irrigation_type: str = models.IrrigationType.muypoca
+    light_type: str = models.LightType.muypoca
 
 class PlantCreate(PlantBase):
     pass
