@@ -1,34 +1,46 @@
 from sqlalchemy.orm import Session
 
 from models import User, Plant, Category
-from schemas import UserCreate, PlantCreate, CategoryCreate
+from schemas import UserCreate, PlantCreate, CategoryCreate, Plant as SchemaPlant, Category as SchemaCategory 
 
 def get_user(db: Session, user_id: int):
     return db.query(User).filter(User.id == user_id).first()
 
+def get_user_by_name(db: Session, name: str):
+    return db.query(User).filter(User.name == name).first()
 
 def get_user_by_email(db: Session, email: str):
     return db.query(User).filter(User.email == email).first()
 
-
 def get_users(db: Session, skip: int = 0, limit: int = 100):
     return db.query(User).offset(skip).limit(limit).all()
 
-
 def create_user(db: Session, user: UserCreate):
     fake_hashed_password = user.password + "notreallyhashed"
-    db_user = User(email=user.email, hashed_password=fake_hashed_password)
+    db_user = User(email=user.email, name=user.name, hashed_password=fake_hashed_password)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
     return db_user
-  
+
+
+def get_plant(db: Session, plant_id: int):
+   return db.query(Plant).filter(Plant.id == plant_id).first()
+
 def get_plants(db: Session, skip: int = 0, limit: int = 100):
    return db.query(Plant).offset(skip).limit(limit).all()
 
 def create_user_plant(db: Session, plant: PlantCreate, user_id: int, category_id: int):
     db_plant = Plant(**plant.dict(), owner_id=user_id, category_id=category_id)
     db.add(db_plant)
+    db.commit()
+    db.refresh(db_plant)
+    return db_plant
+
+def update_user_plant(db: Session, plant: SchemaPlant):
+    
+    db_plant = Plant(**plant.dict())
+    print(db_plant)
     db.commit()
     db.refresh(db_plant)
     return db_plant
