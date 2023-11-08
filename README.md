@@ -4,15 +4,15 @@ Garden Api development in Python to Devcamp Capstone Project to work with Garden
 The objective of the application is to be able to keep track of our plants, whether they are ornamental plants at home or different crops in a garden.
 The system will automatically notify us when an important milestone occurs in a plant (for example, irrigation needs, fertilizer, sowing/transplanting/harvesting dates).
 
-Each plant will have a file with basic information that we can edit, as well as a diary where we will add status updates or new photos of our plant.
+Each plant will have a card with basic information that we can edit, as well as a journal/diary where we will add status updates or new photos of our plant.
 
 ##MainFeature
 
-The system will send notifications (Desktop notifications) to the user regarding different events every “x” days, depending on the frequency that we have configured for a plant and that specific event:
+The system will send notifications (Desktop notifications via websocket) to the user regarding different events every “x” days, depending on the frequency that we have configured for a plant and that specific event:
 Examples:
 Notice of irrigation, fertilization, anti-pest, sowing, harvesting, transplant time.
 
-- function that calculates the days since the last irrigation/fertilizer/event and sends a notice, in principle it would be a notification in the browser,
+- function that calculates the days since the last irrigation/fertilizer/event and sends a notification to the browser.
 
 ## Additional features
 
@@ -34,7 +34,7 @@ Notice of irrigation, fertilization, anti-pest, sowing, harvesting, transplant t
 
 **API**
 
-- Generated with Python + FastAPI
+- Generated with Python + FastAPI + SQLAlchemy
 
 **Backend**
 

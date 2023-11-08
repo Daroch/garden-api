@@ -8,11 +8,11 @@ Cada plantra tendrá una ficha con información básica que podemos editar, así
 
 ## Main Feature
 
-El sistema enviará avisos (Desktop notifications) al usuario relativos a distintos eventos cada “x” dias, en función de la frecuencia que hallamos configurado para una planta y ese evento determinado:
+El sistema enviará avisos (Desktop notifications meidante websocket) al usuario relativos a distintos eventos cada “x” dias, en función de la frecuencia que hallamos configurado para una planta y ese evento determinado:
 Ejemplos:
 Aviso de riego, de abonado, de antiplagas, de siembra, de recolección, de epoca de trasnplante.
 
-- funcion que calcula los dias desde el ultimo riego/abonado/evento y envia un aviso, en principio sería una notificación en el navegador,
+- funcion que calcula los dias desde el ultimo riego/abonado/evento y envia una notificación al navegador,
 
 ## Extras
 
@@ -34,7 +34,7 @@ Aviso de riego, de abonado, de antiplagas, de siembra, de recolección, de epoca
 
 **API**
 
-- Generada con Python + FastAPI
+- Generada con Python + FastAPI + SQLAlchemy
 
 **Backend**
 
