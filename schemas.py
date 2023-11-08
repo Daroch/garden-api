@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 import models
 
 class PlantBase(BaseModel):
@@ -7,6 +7,9 @@ class PlantBase(BaseModel):
     public: bool
     irrigation_type: str = models.IrrigationType.muypoca
     light_type: str = models.LightType.muypoca
+    location: str | None = None
+    notes: str | None = None
+    image: str | None = None
 
 class PlantCreate(PlantBase):
     pass
@@ -15,6 +18,7 @@ class Plant(PlantBase):
     id: int
     owner_id: int
     category_id: int
+    created_at: str
 
     class Config:
         from_attributes = True
@@ -38,7 +42,7 @@ class Category(CategoryBase):
 
 
 class UserBase(BaseModel):
-    email: str
+    email: EmailStr
     name: str
     
 class UserCreate(UserBase):

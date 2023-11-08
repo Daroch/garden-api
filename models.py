@@ -1,4 +1,5 @@
-from sqlalchemy import Column, String, Integer, ForeignKey, Enum, DATETIME, Boolean
+import datetime
+from sqlalchemy import Column, String, Integer, ForeignKey, Enum, DateTime, Boolean, func
 from sqlalchemy.orm import relationship
 
 from database import Base
@@ -45,12 +46,17 @@ class Plant(Base):
 
   id = Column(Integer, primary_key=True, index=True)
   name = Column(String(30), index=True)
-  description = Column(String(300), index=True)
+  description = Column(String(300), index=True, nullable= True)
   public = Column(Boolean, default=False)
   owner_id = Column(Integer, ForeignKey("users.id"))
   category_id = Column(Integer, ForeignKey("categories.id"))
   irrigation_type = Column(Enum('muypoca','poca','normal','bastante','mucha'), name='irrigation_type', nullable= False, default=IrrigationType.muypoca)
   light_type = Column(Enum('muypoca','poca','normal','bastante','mucha'), name='light_type', nullable= False, default=LightType.muypoca)
+  location = Column(String(30), nullable=True)
+  notes = Column(String(500), nullable=True)
+  image = Column(String(120), nullable= True)
+  created_at = Column(DateTime(timezone=True), server_default=func.now())
+  
 
   owner = relationship("User", back_populates="plants")
   category = relationship("Category", back_populates="plants")
