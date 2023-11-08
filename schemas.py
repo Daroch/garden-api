@@ -1,6 +1,23 @@
 from pydantic import BaseModel, EmailStr
 import models
 
+class JournalBase(BaseModel):
+    title: str
+    description: str | None = None
+    image: str | None = None
+
+class JournalCreate(JournalBase):
+    pass
+
+class Journal(JournalBase):
+    id: int
+    plant_id: int
+    created_at: str
+
+    class Config:
+        from_attributes = True
+
+
 class PlantBase(BaseModel):
     name: str
     description: str | None = None
