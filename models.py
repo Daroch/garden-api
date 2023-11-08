@@ -66,8 +66,8 @@ class Journal(Base):
   __tablename__ = "journals"
 
   id = Column(Integer, primary_key=True, index=True)
-  title = Column(String(30), index=True)
-  description = Column(String(300), index=True, nullable= True)
+  title = Column(String(100), index=True)
+  description = Column(String(500), index=True, nullable= True)
   created_at = Column(DateTime(timezone=True), server_default=func.now())
   image = Column(String(120), nullable= True)
   plant_id = Column(Integer, ForeignKey("plants.id"), nullable= False)

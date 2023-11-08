@@ -41,6 +41,9 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
 def create_plant_for_user(
     user_id: int, category_id: int, plant: schemas.PlantCreate, db: Session = Depends(get_db)
 ):
+    db_user = crud.get_user(db, user_id=user_id)
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
     return crud.create_user_plant(db=db, plant=plant, user_id=user_id, category_id=category_id)
 
 
@@ -83,3 +86,38 @@ def create_category(category: schemas.CategoryCreate, db: Session = Depends(get_
     if db_category:
         raise HTTPException(status_code=400, detail="category already exists")
     return crud.create_category(db=db, category=category)
+
+
+@app.get("/users/{user_id}/plants/{plant_id}/journals/{journal_id}", response_model=schemas.Journal)
+def read_journal(
+    journal_id: int, db: Session = Depends(get_db)
+):
+    db_journal = crud.get_journal(db, journal_id=journal_id)
+    if  db_journal is None:
+        raise HTTPException(status_code=404, detail="Journal not found")
+    return db_journal
+
+@app.get("/users/{user_id}/plants/{plant_id}/journals/", response_model=list[schemas.Journal])
+def read_journals_for_plant(plant_id: int, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    journals = crud.journals_for_plant(db, skip=skip, limit=limit, plant_id=plant_id)
+    return journals
+
+@app.post("/users/{user_id}/plants/{plant_id}/journals", response_model=schemas.Journal)
+def create_journal_for_plant(
+    plant_id: int, journal: schemas.JournalCreate, db: Session = Depends(get_db)
+):
+    db_plant = crud.get_plant(db, plant_id=plant_id)
+    if db_plant is None:
+        raise HTTPException(status_code=404, detail="Plant not found")
+    db_journal = crud.create_journal_plant(db=db, journal=journal, plant_id=plant_id)
+    return db_journal
+
+@app.patch("/users/{user_id}/plants/{plant_id}/journals/{journal_id}", response_model=schemas.Journal)
+def update_journal_for_plant(plant_id: int, journal_id: int, journal: schemas.JournalCreate, db: Session = Depends(get_db)
+):
+    db_journal = crud.get_journal(db, journal_id=journal_id)
+    if  db_journal is None:
+        raise HTTPException(status_code=404, detail="Journal not found")
+    if  plant_id is not db_journal.plant_id:
+        raise HTTPException(status_code=500, detail="This journal i snot for that plant")
+    return crud.update_plant_journal(db=db, plant_id=plant_id, plant=plant)

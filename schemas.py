@@ -1,3 +1,4 @@
+from datetime import datetime
 from pydantic import BaseModel, EmailStr
 import models
 
@@ -12,7 +13,7 @@ class JournalCreate(JournalBase):
 class Journal(JournalBase):
     id: int
     plant_id: int
-    created_at: str
+    created_at: datetime
 
     class Config:
         from_attributes = True
@@ -35,7 +36,8 @@ class Plant(PlantBase):
     id: int
     owner_id: int
     category_id: int
-    created_at: str
+    created_at: datetime
+    journals: list[Journal] = []
 
     class Config:
         from_attributes = True
