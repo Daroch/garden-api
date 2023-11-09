@@ -58,6 +58,7 @@ class Plant(Base):
   created_at = Column(DateTime(timezone=True), server_default=func.now())
   
   journals = relationship("Journal",back_populates="plant")
+  alerts = relationship("Alert",back_populates="plant")
 
   owner = relationship("User", back_populates="plants")
   category = relationship("Category", back_populates="plants")
@@ -73,3 +74,26 @@ class Journal(Base):
   plant_id = Column(Integer, ForeignKey("plants.id"), nullable= False)
 
   plant = relationship("Plant", back_populates="journals")
+
+
+class AlertType(Base):
+  __tablename__ = "alert_types"
+
+  id = Column(Integer, primary_key=True, index=True)
+  alert_name = Column(String(30), unique=True, index=True, nullable=False)
+  
+  alerts = relationship("Alert", back_populates="alert_type")
+
+class Alert(Base):
+  __tablename__ = "alerts"
+  
+  id = Column(Integer, primary_key=True, index=True)
+  notes = Column(String(200), index=True)
+  frecuency = Column(DateTime(timezone=True))
+  start_date = Column(DateTime(timezone=True), server_default=func.now())
+  status = Column(Boolean, default=True)
+  alert_type_id = Column(Integer, ForeignKey("alert_types.id"), nullable=False)
+  plant_id = Column(Integer, ForeignKey("plants.id"), nullable= False)
+  
+  alert_type = relationship("AlertType", back_populates="alerts")
+  plant = relationship("Plant", back_populates="alerts")

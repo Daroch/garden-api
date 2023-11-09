@@ -2,6 +2,38 @@ from datetime import datetime
 from pydantic import BaseModel, EmailStr
 import models
 
+class AlertBase(BaseModel):
+    notes: str | None = None
+    frecuency: datetime
+    start_date: datetime
+    status: bool
+    alert_type_id: int
+
+class AlertCreate(AlertBase):
+    pass
+
+class Alert(AlertBase):
+    id: int
+    plant_id: int
+
+    class Config:
+        from_attributes = True
+
+
+class AlertTypeBase(BaseModel):
+    alert_name: str
+
+class AlertTypeCreate(AlertTypeBase):
+    pass
+
+class AlertType(AlertTypeBase):
+    id: int
+    alerts: list[Alert] = []
+
+    class Config:
+        from_attributes = True
+
+
 class JournalBase(BaseModel):
     title: str
     description: str | None = None
@@ -38,6 +70,7 @@ class Plant(PlantBase):
     category_id: int
     created_at: datetime
     journals: list[Journal] = []
+    alerts: list[Alert] = []
 
     class Config:
         from_attributes = True
@@ -63,7 +96,7 @@ class Category(CategoryBase):
 class UserBase(BaseModel):
     email: EmailStr
     name: str
-    
+
 class UserCreate(UserBase):
     password: str
 
@@ -74,4 +107,3 @@ class User(UserBase):
 
     class Config:
         from_attributes = True
-        
