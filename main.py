@@ -121,3 +121,16 @@ def update_journal_for_plant(plant_id: int, journal_id: int, journal: schemas.Jo
     if  plant_id is not db_journal.plant_id:
         raise HTTPException(status_code=500, detail="This journal i snot for that plant")
     return crud.update_plant_journal(db=db, plant_id=plant_id, plant=plant)
+
+
+@app.get("/alert_types/", response_model=list[schemas.AlertType])
+def read_alert_types(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    alert_types = crud.get_alert_types(db, skip=skip, limit=limit)
+    return alert_types
+
+@app.post("/alert_types/", response_model=schemas.AlertType)
+def create_alert_type(alert_type: schemas.AlertTypeCreate, db: Session = Depends(get_db)):
+    db_alert_type = crud.get_alert_type_by_name(db, alert_name=alert_type.alert_name)
+    if db_alert_type:
+        raise HTTPException(status_code=400, detail="Alert type already exists")
+    return crud.create_alert_type(db=db, alert_type=alert_type)

@@ -1,8 +1,8 @@
 from datetime import datetime
 from sqlalchemy.orm import Session
 
-from models import User, Plant, Category, Journal
-from schemas import UserCreate, PlantCreate, CategoryCreate, JournalCreate
+from models import User, Plant, Category, Journal, AlertType, Alert
+from schemas import UserCreate, PlantCreate, CategoryCreate, JournalCreate, AlertTypeCreate, AlertCreate
 
 
 def get_user(db: Session, user_id: int):
@@ -95,3 +95,18 @@ def update_plant_journal(db: Session, journal_id: int, journal: JournalCreate):
         setattr(db_journal, key, value)
     db.commit()
     return db_journal
+
+
+def get_alert_types(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(AlertType).offset(skip).limit(limit).all()
+
+def get_alert_type_by_name(db: Session, alert_name: str):
+    return db.query(AlertType).filter(AlertType.alert_name == alert_name).first()
+
+def create_alert_type(db: Session, alert_type: AlertTypeCreate):
+    db_alert_type = AlertType(
+        alert_name=alert_type.alert_name)
+    db.add(db_alert_type)
+    db.commit()
+    db.refresh(db_alert_type)
+    return db_alert_type
