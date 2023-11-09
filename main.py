@@ -1,4 +1,5 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 
 import crud, models, schemas
@@ -18,12 +19,14 @@ def get_db():
 def root():
     return {"msg": "Hello, I am FastAPI"}
 
-@app.post("/users/", response_model=schemas.User)
+@app.post("/users/", response_model=schemas.User, status_code=201)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_email(db, email=user.email)
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
-    return crud.create_user(db=db, user=user)
+    db_new_user = crud.create_user(db=db, user=user)
+    return db_new_user
+
 
 @app.get("/users/", response_model=list[schemas.User])
 def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
@@ -37,7 +40,7 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="User not found")
     return db_user
 
-@app.post("/users/{user_id}/plants/", response_model=schemas.Plant)
+@app.post("/users/{user_id}/plants/", response_model=schemas.Plant, status_code=201)
 def create_plant_for_user(
     user_id: int, category_id: int, plant: schemas.PlantCreate, db: Session = Depends(get_db)
 ):
@@ -80,7 +83,7 @@ def read_categories(skip: int = 0, limit: int = 100, db: Session = Depends(get_d
     categories = crud.get_categories(db, skip=skip, limit=limit)
     return categories
 
-@app.post("/categories/", response_model=schemas.Category)
+@app.post("/categories/", response_model=schemas.Category, status_code=201)
 def create_category(category: schemas.CategoryCreate, db: Session = Depends(get_db)):
     db_category = crud.get_category_by_name(db, name=category.name)
     if db_category:
@@ -102,7 +105,7 @@ def read_journals_for_plant(plant_id: int, skip: int = 0, limit: int = 100, db: 
     journals = crud.journals_for_plant(db, skip=skip, limit=limit, plant_id=plant_id)
     return journals
 
-@app.post("/users/{user_id}/plants/{plant_id}/journals", response_model=schemas.Journal)
+@app.post("/users/{user_id}/plants/{plant_id}/journals", response_model=schemas.Journal, status_code=201)
 def create_journal_for_plant(
     plant_id: int, journal: schemas.JournalCreate, db: Session = Depends(get_db)
 ):
@@ -128,7 +131,7 @@ def read_alert_types(skip: int = 0, limit: int = 100, db: Session = Depends(get_
     alert_types = crud.get_alert_types(db, skip=skip, limit=limit)
     return alert_types
 
-@app.post("/alert_types/", response_model=schemas.AlertType)
+@app.post("/alert_types/", response_model=schemas.AlertType, status_code=201)
 def create_alert_type(alert_type: schemas.AlertTypeCreate, db: Session = Depends(get_db)):
     db_alert_type = crud.get_alert_type_by_name(db, alert_name=alert_type.alert_name)
     if db_alert_type:
@@ -150,7 +153,7 @@ def read_alerts_for_plant(plant_id: int, skip: int = 0, limit: int = 100, db: Se
     alerts = crud.alerts_for_plant(db, skip=skip, limit=limit, plant_id=plant_id)
     return alerts
 
-@app.post("/users/{user_id}/plants/{plant_id}/alerts", response_model=schemas.Alert)
+@app.post("/users/{user_id}/plants/{plant_id}/alerts", response_model=schemas.Alert, status_code=201)
 def create_alert_for_plant(
     plant_id: int, alert_type_id: int, alert: schemas.AlertCreate, db: Session = Depends(get_db)
 ):
