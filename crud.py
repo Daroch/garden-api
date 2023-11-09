@@ -31,6 +31,14 @@ def create_user(db: Session, user: UserCreate):
     return db_user
 
 
+def delete_user_by_id(db: Session, user_id: int):
+    db_user = db.query(User).filter(User.id == user_id).first()
+    db.delete(db_user)
+    db.commit()
+    return db_user
+
+
+
 def get_plant(db: Session, plant_id: int):
     return db.query(Plant).filter(Plant.id == plant_id).first()
 
