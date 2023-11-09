@@ -18,7 +18,7 @@ class Alert(AlertBase):
     plant_id: int
     alert_type_id: int
 
-    class Config:
+    class ConfigDict:
         from_attributes = True
 
 
@@ -32,7 +32,7 @@ class AlertType(AlertTypeBase):
     id: int
     alerts: list[Alert] = []
 
-    class Config:
+    class ConfigDict:
         from_attributes = True
 
 
@@ -49,7 +49,7 @@ class Journal(JournalBase):
     plant_id: int
     created_at: datetime
 
-    class Config:
+    class ConfigDict:
         from_attributes = True
 
 
@@ -74,7 +74,7 @@ class Plant(PlantBase):
     journals: list[Journal] = []
     alerts: list[Alert] = []
 
-    class Config:
+    class ConfigDict:
         from_attributes = True
 
 
@@ -90,7 +90,7 @@ class Category(CategoryBase):
     id: int
     plants: list[Plant] = []
 
-    class Config:
+    class ConfigDict:
         from_attributes = True
 
 
@@ -107,5 +107,5 @@ class User(UserBase):
     is_active: bool
     plants: list[Plant] = []
 
-    class Config:
+    class ConfigDict:
         from_attributes = True
