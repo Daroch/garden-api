@@ -8,7 +8,6 @@ class AlertBase(BaseModel):
     status: bool
     repeat: bool
     frecuency: int
-    alert_type_id: int
 
 class AlertCreate(AlertBase):
     pass
@@ -17,6 +16,7 @@ class Alert(AlertBase):
     id: int
     created_at: datetime
     plant_id: int
+    alert_type_id: int
 
     class Config:
         from_attributes = True

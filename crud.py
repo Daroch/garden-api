@@ -117,8 +117,8 @@ def get_alert(db: Session, alert_id: int):
 def get_alerts_for_plant(db: Session, plant_id: int, skip: int = 0, limit: int = 100):
     return db.query(Alert).filter(Alert.plant_id == plant_id).offset(skip).limit(limit).all()
 
-def create_alert_plant(db: Session, alert: AlertCreate, plant_id: int):
-    db_alert = Alert(**alert.dict(), plant_id=plant_id, created_at=datetime.now())
+def create_alert_plant(db: Session, alert: AlertCreate, plant_id: int, alert_type_id: int):
+    db_alert = Alert(**alert.dict(), plant_id=plant_id, alert_type_id=alert_type_id, created_at=datetime.now())
     db.add(db_alert)
     db.commit()
     db.refresh(db_alert)
