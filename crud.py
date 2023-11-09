@@ -110,3 +110,23 @@ def create_alert_type(db: Session, alert_type: AlertTypeCreate):
     db.commit()
     db.refresh(db_alert_type)
     return db_alert_type
+
+def get_alert(db: Session, alert_id: int):
+    return db.query(Alert).filter(Alert.id == alert_id).first()
+
+def get_alerts_for_plant(db: Session, plant_id: int, skip: int = 0, limit: int = 100):
+    return db.query(Alert).filter(Alert.plant_id == plant_id).offset(skip).limit(limit).all()
+
+def create_alert_plant(db: Session, alert: AlertCreate, plant_id: int):
+    db_alert = Alert(**alert.dict(), plant_id=plant_id, created_at=datetime.now())
+    db.add(db_alert)
+    db.commit()
+    db.refresh(db_alert)
+    return db_alert
+
+def update_plant_alert(db: Session, alert_id: int, alert: AlertCreate):
+    db_alert= get_alert(db, alert_id=alert_id)
+    for key, value in alert:
+        setattr(db_alert, key, value)
+    db.commit()
+    return db_alert

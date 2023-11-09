@@ -89,9 +89,11 @@ class Alert(Base):
   
   id = Column(Integer, primary_key=True, index=True)
   notes = Column(String(200), index=True)
-  frecuency = Column(DateTime(timezone=True))
+  created_at = Column(DateTime(timezone=True), server_default=func.now())
   start_date = Column(DateTime(timezone=True), server_default=func.now())
   status = Column(Boolean, default=True)
+  repeat = Column(Boolean, default=True)
+  frecuency = Column(Integer)
   alert_type_id = Column(Integer, ForeignKey("alert_types.id"), nullable=False)
   plant_id = Column(Integer, ForeignKey("plants.id"), nullable= False)
   

@@ -4,9 +4,10 @@ import models
 
 class AlertBase(BaseModel):
     notes: str | None = None
-    frecuency: datetime
     start_date: datetime
     status: bool
+    repeat: bool
+    frecuency: int
     alert_type_id: int
 
 class AlertCreate(AlertBase):
@@ -14,6 +15,7 @@ class AlertCreate(AlertBase):
 
 class Alert(AlertBase):
     id: int
+    created_at: datetime
     plant_id: int
 
     class Config:
