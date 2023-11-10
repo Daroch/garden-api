@@ -67,6 +67,12 @@ def update_user_plant(db: Session, plant_id: int, plant: PlantCreate):
     return db_plant
 
 
+def delete_user_plant_by_id(db: Session, plant_id: int):
+    db_plant = db.query(Plant).filter(Plant.id == plant_id).first()
+    db.delete(db_plant)
+    db.commit()
+    return db_plant
+
 def get_categories(db: Session, skip: int = 0, limit: int = 100):
     return db.query(Category).offset(skip).limit(limit).all()
 
@@ -82,6 +88,13 @@ def create_category(db: Session, category: CategoryCreate):
     db.commit()
     db.refresh(db_category)
     return db_category
+
+def delete_category_by_id(db: Session, category_id: int):
+    db_category = db.query(Category).filter(Category.id == category_id).first()
+    db.delete(db_category)
+    db.commit()
+    return db_category
+
 
 
 def get_journal(db: Session, journal_id: int):
@@ -103,6 +116,13 @@ def update_plant_journal(db: Session, journal_id: int, journal: JournalCreate):
         setattr(db_journal, key, value)
     db.commit()
     return db_journal
+
+def delete_journal_by_id(db: Session, journal_id: int):
+    db_journal = db.query(Journal).filter(Journal.id == journal_id).first()
+    db.delete(db_journal)
+    db.commit()
+    return db_journal
+
 
 
 def get_alert_types(db: Session, skip: int = 0, limit: int = 100):
@@ -136,5 +156,11 @@ def update_plant_alert(db: Session, alert_id: int, alert: AlertCreate):
     db_alert= get_alert(db, alert_id=alert_id)
     for key, value in alert:
         setattr(db_alert, key, value)
+    db.commit()
+    return db_alert
+
+def delete_alert_by_id(db: Session, alert_id: int):
+    db_alert = db.query(Alert).filter(Alert.id == alert_id).first()
+    db.delete(db_alert)
     db.commit()
     return db_alert

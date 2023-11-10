@@ -85,6 +85,16 @@ def update_plant_for_user(user_id: int, plant_id: int, plant: schemas.PlantCreat
     return crud.update_user_plant(db=db, plant_id=plant_id, plant=plant)
 
 
+@app.delete("/users/{user_id}/plants/{plant_id}", response_model=schemas.Plant)
+def delete_plant_for_user(user_id: int, plant_id: int, db: Session = Depends(get_db)
+):
+    db_plant = crud.get_plant(db, plant_id=plant_id)
+    if  db_plant is None:
+        raise HTTPException(status_code=404, detail="Plant not found")
+    if  user_id is not db_plant.owner_id:
+        raise HTTPException(status_code=500, detail="This is not your plant")
+    return crud.delete_user_plant_by_id(db=db, plant_id=plant_id)
+
 
 @app.get("/categories/", response_model=list[schemas.Category])
 def read_categories(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
@@ -133,6 +143,13 @@ def update_journal_for_plant(plant_id: int, journal_id: int, journal: schemas.Jo
         raise HTTPException(status_code=500, detail="This journal i snot for that plant")
     return crud.update_plant_journal(db=db, plant_id=plant_id, plant=plant)
 
+@app.delete("/users/{user_id}/plants/{plant_id}/journals/{journal_id}", response_model=schemas.Journal)
+def delete_journal(journal_id: int, db: Session = Depends(get_db)):
+    db_journal = crud.get_journal(db, journal_id=journal_id)
+    if db_journal is None:
+        raise HTTPException(status_code=404, detail="Journal not found")
+    db_journal  = crud.delete_journal_by_id(db, journal_id=journal_id)
+    return db_journal
 
 @app.get("/alert_types/", response_model=list[schemas.AlertType])
 def read_alert_types(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
@@ -180,3 +197,12 @@ def update_alert_for_plant(plant_id: int, alert_id: int, alert: schemas.AlertCre
     if  plant_id is not db_alert.plant_id:
         raise HTTPException(status_code=500, detail="This alert i snot for that plant")
     return crud.update_plant_alert(db=db, plant_id=plant_id, alert=alert)
+
+
+@app.delete("/users/{user_id}/plants/{plant_id}/alerts/{alert_id}", response_model=schemas.Alert)
+def delete_alert(alert_id: int, db: Session = Depends(get_db)):
+    db_alert = crud.get_alert(db, alert_id=alert_id)
+    if db_alert is None:
+        raise HTTPException(status_code=404, detail="Alert not found")
+    db_alert  = crud.delete_alert_by_id(db, alert_id=alert_id)
+    return db_alert
