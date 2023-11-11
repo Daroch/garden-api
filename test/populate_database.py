@@ -3,15 +3,11 @@ from main import app
 
 client = TestClient(app)
 
-
-def read_main():
-    response = client.get("/")
-    return response
-
-@app.get("/populate")
-def populate_data(db: Session = Depends(get_db)):
-    users = crud.get_users(db)
-    if users:
+def test_populate():
+    response = client.get("/users/")
+    assert response.status_code == 200, response.text
+    data = response.json()
+    if data:
         raise HTTPException(status_code=404, detail="Ya existen datos!!")
     user1 = {
         "email": "frodo@gmail.com",
@@ -103,21 +99,19 @@ def populate_data(db: Session = Depends(get_db)):
         "repeat": True,
         "frecuency": 10
     }
-   #db_user = User(email=user.email, name=user.name,
-    #               hashed_password=fake_hashed_password)
-    create_user(db=db,user=json.dumps(user1))
-    crud.create_user(db=db, user=user2)
-    crud.create_user(db=db, user=user3)
-    crud.create_category(db=db, category=category1)
-    crud.create_category(db=db, category=category2)
-    crud.create_user_plant(db=db, plant=plant1, user_id=1, category_id=1)
-    crud.create_user_plant(db=db, plant=plant2, user_id=1, category_id=1)
-    crud.create_user_plant(db=db, plant=plant3, user_id=2, category_id=2)
-    crud.create_journal_plant(db=db, journal=journal1, plant_id=1)
-    crud.create_journal_plant(db=db, journal=journal2, plant_id=1)
-    crud.create_alert_type(db=db, alert_type=alert_type1)
-    crud.create_alert_type(db=db, alert_type=alert_type2)
-    crud.create_alert_plant(db=db, alert=alert1, plant_id=1, alert_type_id=1)
-    crud.create_alert_plant(db=db, alert=alert2, plant_id=3, alert_type_id=2)
-    crud.create_alert_plant(db=db, alert=alert3, plant_id=3, alert_type_id=1)
+    response = client.post("/users/",json=user1)
+    response = client.post("/users/",json=user2)
+    response = client.post("/users/",json=user3)
+    response = client.post("/categories/",json=category1)
+    response = client.post("/categories/",json=category2)
+    response = client.post("/users/1/plants?category_id=1",json=plant1)
+    response = client.post("/users/1/plants?category_id=1",json=plant2)
+    response = client.post("/users/2/plants?category_id=2",json=plant3)
+    response = client.post("/users/1/plants/1/journals",json=journal1)
+    response = client.post("/users/1/plants/1/journals",json=journal2)
+    response = client.post("/alert_types/",json=alert_type1)
+    response = client.post("/alert_types/",json=alert_type2)
+    response = client.post("/users/1/plants/1/alerts?alert_type_id=1",json=alert1)
+    response = client.post("/users/1/plants/1/alerts?alert_type_id=1",json=alert2)
+    response = client.post("/users/1/plants/3/alerts?alert_type_id=1",json=alert3)
     return 'Hecho, datos añadidos!'

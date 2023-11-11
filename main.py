@@ -1,13 +1,24 @@
 from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
+from fastapi.middleware.cors import CORSMiddleware
 
 import crud, models, schemas
 from database import engine, SessionLocal
 
 models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
+origin = [
+    'http://localhost:3000'
+]
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origin,
+    allow_credentials=True,
+    allow_methods=['*'],
+    allow_headers=['*']
+)
 def get_db():
   db = SessionLocal()
   try:
