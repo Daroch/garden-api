@@ -12,17 +12,17 @@ def test_populate():
     user1 = {
         "email": "frodo@gmail.com",
         "name": "Frodo",
-        "password": "12345"
+        "hashed_password": "12345"
     }
     user2 = {
         "email": "gandalf@gmail.com",
         "name": "Gandalf",
-        "password": "12345"
+        "hashed_password": "12345"
     }
     user3 = {
         "email": "Saruman@gmail.com",
         "name": "Saruman",
-        "password": "12345"
+        "hashed_password": "12345"
     }
     category1 = {
         "name": "Ornamentales",

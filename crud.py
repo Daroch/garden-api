@@ -24,7 +24,7 @@ def get_users_by_id(db: Session, skip: int = 0, limit: int = 100):
 
 
 def create_user(db: Session, user: UserCreate):
-    hashed_password = auth.get_password_hash(user.password)
+    hashed_password = auth.get_password_hash(user.hashed_password)
     db_user = User(email=user.email, name=user.name,
                    hashed_password=hashed_password)
     db.add(db_user)

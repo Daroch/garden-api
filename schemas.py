@@ -2,6 +2,7 @@ from datetime import datetime
 from pydantic import BaseModel, EmailStr
 import models
 
+
 class AlertBase(BaseModel):
     notes: str | None = None
     start_date: datetime
@@ -9,8 +10,10 @@ class AlertBase(BaseModel):
     repeat: bool
     frecuency: int
 
+
 class AlertCreate(AlertBase):
     pass
+
 
 class Alert(AlertBase):
     id: int
@@ -25,8 +28,10 @@ class Alert(AlertBase):
 class AlertTypeBase(BaseModel):
     alert_name: str
 
+
 class AlertTypeCreate(AlertTypeBase):
     pass
+
 
 class AlertType(AlertTypeBase):
     id: int
@@ -41,8 +46,10 @@ class JournalBase(BaseModel):
     description: str | None = None
     image: str | None = None
 
+
 class JournalCreate(JournalBase):
     pass
+
 
 class Journal(JournalBase):
     id: int
@@ -63,8 +70,10 @@ class PlantBase(BaseModel):
     notes: str | None = None
     image: str | None = None
 
+
 class PlantCreate(PlantBase):
     pass
+
 
 class Plant(PlantBase):
     id: int
@@ -78,13 +87,14 @@ class Plant(PlantBase):
         from_attributes = True
 
 
-
 class CategoryBase(BaseModel):
     name: str
     description: str | None = None
 
+
 class CategoryCreate(CategoryBase):
     pass
+
 
 class Category(CategoryBase):
     id: int
@@ -94,13 +104,14 @@ class Category(CategoryBase):
         from_attributes = True
 
 
-
 class UserBase(BaseModel):
     email: EmailStr
     name: str
 
+
 class UserCreate(UserBase):
-    password: str
+    hashed_password: str
+
 
 class User(UserBase):
     id: int
