@@ -11,7 +11,7 @@ router = APIRouter(tags=["Plants"])
 def create_plant_for_user(
     user_id: int, category_id: int, plant: schemas.PlantCreate, db: Session = Depends(get_db)
 ):
-    db_user = crud.get_user(db, user_id=user_id)
+    db_user = crud.get_user_by_id(db, user_id=user_id)
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return crud.create_user_plant(db=db, plant=plant, user_id=user_id, category_id=category_id)
