@@ -4,7 +4,7 @@ from dependencies import get_db
 import schemas
 import crud
 
-router = APIRouter()
+router = APIRouter(tags=["Journals"])
 
 
 @router.get("/users/{user_id}/plants/{plant_id}/journals/{journal_id}", response_model=schemas.Journal)

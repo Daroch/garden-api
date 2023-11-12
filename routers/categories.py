@@ -4,7 +4,7 @@ from dependencies import get_db
 import schemas
 import crud
 
-router = APIRouter()
+router = APIRouter(tags=["Categories"])
 
 
 @router.get("/categories/", response_model=list[schemas.Category])

@@ -4,7 +4,7 @@ from dependencies import get_db
 import schemas
 import crud
 
-router = APIRouter()
+router = APIRouter(tags=["Alerts"])
 
 
 @router.get("/alert_types/", response_model=list[schemas.AlertType])

@@ -4,7 +4,7 @@ from dependencies import get_db
 import schemas
 import crud
 
-router = APIRouter()
+router = APIRouter(tags=["Users"])
 
 
 @router.post("/users/", response_model=schemas.User, status_code=201)
