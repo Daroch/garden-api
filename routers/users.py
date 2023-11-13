@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from typing import Annotated
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-
+from datetime import timedelta
 from sqlalchemy.orm import Session
+
 from dependencies import get_db
-import schemas
+from schemas import User, UserCreate, Token
 import crud
 import auth
 
@@ -12,45 +13,32 @@ router = APIRouter(tags=["Users"])
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
-def fake_decode_token(token):
-    return schemas.User(
-        name=token + "fakedecoded", email="john@example.com"
-    )
-
-
-async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
-    user = fake_decode_token(token)
+@router.post("/token", response_model=Token)
+async def login_for_access_token(
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: Session = Depends(get_db)
+):
+    user = auth.authenticate_user(
+        db=db, username=form_data.username, password=form_data.password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid authentication credentials",
+            detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    return user
-
-
-@router.post("/token")
-async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
-    user_dict = crud.get_user_by_name(form_data.username)
-    if not user_dict:
-        raise HTTPException(
-            status_code=400, detail="Incorrect username or password")
-    user = schemas.UserCreate(**user_dict)
-    hashed_password = auth.get_password_hash(form_data.password)
-    if not hashed_password == user.hashed_password:
-        raise HTTPException(
-            status_code=400, detail="Incorrect username or password")
-
-    return {"access_token": user.name, "token_type": "bearer"}
+    access_token_expires = timedelta(minutes=30)
+    access_token = auth.create_access_token(
+        data={"sub": user.name}, expires_delta=access_token_expires
+    )
+    return {"access_token": access_token, "token_type": "bearer"}
 
 
 @router.get("/users/me")
-async def read_users_me(current_user: Annotated[schemas.User, Depends(get_current_user)]):
+async def read_users_me(current_user: Annotated[User, Depends(auth.get_current_active_user)]):
     return current_user
 
 
-@router.post("/users/", response_model=schemas.User, status_code=201)
-def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+@router.post("/users/", response_model=User, status_code=201)
+def create_user(user: UserCreate, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_email(db, email=user.email)
     if db_user:
         raise HTTPException(status_code=400, detail="Email already registered")
@@ -58,13 +46,13 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     return db_new_user
 
 
-@router.get("/users/", response_model=list[schemas.User])
+@router.get("/users/", response_model=list[User])
 def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     users = crud.get_users(db, skip=skip, limit=limit)
     return users
 
 
-@router.get("/users/{user_id}", response_model=schemas.User)
+@router.get("/users/{user_id}", response_model=User)
 def read_user(user_id: int, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_id(db, user_id=user_id)
     if db_user is None:
@@ -72,7 +60,23 @@ def read_user(user_id: int, db: Session = Depends(get_db)):
     return db_user
 
 
-@router.delete("/users/{user_id}", response_model=schemas.User)
+@router.get("/users2/{name}", response_model=User)
+def read_user_by_name2(name: str, db: Session = Depends(get_db)):
+    db_user = crud.get_user_by_name(db=db, name=name)
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return db_user
+
+
+@router.get("/users3/{name}", response_model=UserCreate)
+def read_user_by_name3(name: str, db: Session = Depends(get_db)):
+    db_user = crud.get_user_by_name(db=db, name=name)
+    if db_user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    return db_user
+
+
+@router.delete("/users/{user_id}", response_model=User)
 def delete_user(user_id: int, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_id(db, user_id=user_id)
     if db_user is None:
