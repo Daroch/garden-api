@@ -1,11 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Security, status
 from typing import Annotated
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from datetime import timedelta
 from sqlalchemy.orm import Session
 
 from dependencies import get_db
-from schemas import User, UserCreate, Token
+from schemas import User, UserCreate, Token, Plant
 import crud
 import auth
 
@@ -27,7 +27,7 @@ async def login_for_access_token(
         )
     access_token_expires = timedelta(minutes=30)
     access_token = auth.create_access_token(
-        data={"sub": user.name}, expires_delta=access_token_expires
+        data={"sub": user.name, "scopes": form_data.scopes}, expires_delta=access_token_expires
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
@@ -35,6 +35,20 @@ async def login_for_access_token(
 @router.get("/users/me", response_model=User)
 async def read_users_me(current_user: Annotated[User, Depends(auth.get_current_active_user)]):
     return current_user
+
+
+@router.get("/users/me/plants/", response_model=list[Plant])
+async def read_own_plants(
+    current_user: Annotated[User, Security(
+        auth.get_current_active_user, scopes=["plants"])], db: Session = Depends(get_db)
+):
+    db_plants = crud.get_plants_for_user(db, current_user.id)
+    return db_plants
+
+
+@router.get("/status/")
+async def read_system_status(current_user: Annotated[User, Depends(auth.get_current_user)]):
+    return {"status": "ok"}
 
 
 @router.post("/users/", response_model=User, status_code=201)
