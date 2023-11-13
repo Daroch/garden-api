@@ -1,15 +1,17 @@
-from fastapi import APIRouter, Depends, HTTPException
+from typing import Annotated
+from fastapi import APIRouter, Depends, Security, HTTPException
 from sqlalchemy.orm import Session
 from dependencies import get_db
-import schemas
+from schemas import User, Plant, PlantCreate
 import crud
+import auth
 
 router = APIRouter(tags=["Plants"])
 
 
-@router.post("/users/{user_id}/plants/", response_model=schemas.Plant, status_code=201)
-def create_plant_for_user(
-    user_id: int, category_id: int, plant: schemas.PlantCreate, db: Session = Depends(get_db)
+@router.post("/users/{user_id}/plants/", response_model=Plant, status_code=201)
+def create_plant(
+    user_id: int, category_id: int, plant: PlantCreate, db: Session = Depends(get_db)
 ):
     db_user = crud.get_user_by_id(db, user_id=user_id)
     if db_user is None:
@@ -17,15 +19,16 @@ def create_plant_for_user(
     return crud.create_user_plant(db=db, plant=plant, user_id=user_id, category_id=category_id)
 
 
-@router.get("/users/{user_id}/plants", response_model=list[schemas.Plant])
-def read_plants_for_user(user_id: int, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+@router.get("/users/{user_id}/plants", response_model=list[Plant])
+def get_plants_for_user(current_user: Annotated[User, Security(
+        auth.get_current_active_user, scopes=["plants"])], skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     plants = crud.get_plants_for_user(
-        db, skip=skip, limit=limit, user_id=user_id)
+        db, skip=skip, limit=limit, user_id=current_user.id)
     return plants
 
 
-@router.get("/users/{user_id}/plants/{plant_id}", response_model=schemas.Plant)
-def read_plant(
+@router.get("/users/{user_id}/plants/{plant_id}", response_model=Plant)
+def get_plant_details(
     plant_id: int, db: Session = Depends(get_db)
 ):
     db_plant = crud.get_plant(db, plant_id=plant_id)
@@ -34,8 +37,8 @@ def read_plant(
     return db_plant
 
 
-@router.patch("/users/{user_id}/plants/{plant_id}", response_model=schemas.Plant)
-def update_plant_for_user(user_id: int, plant_id: int, plant: schemas.PlantCreate, db: Session = Depends(get_db)
+@router.patch("/users/{user_id}/plants/{plant_id}", response_model=Plant)
+def update_plant(user_id: int, plant_id: int, plant: PlantCreate, db: Session = Depends(get_db)
                           ):
     db_plant = crud.get_plant(db, plant_id=plant_id)
     if db_plant is None:
@@ -45,8 +48,8 @@ def update_plant_for_user(user_id: int, plant_id: int, plant: schemas.PlantCreat
     return crud.update_user_plant(db=db, plant_id=plant_id, plant=plant)
 
 
-@router.delete("/users/{user_id}/plants/{plant_id}", response_model=schemas.Plant)
-def delete_plant_for_user(user_id: int, plant_id: int, db: Session = Depends(get_db)
+@router.delete("/users/{user_id}/plants/{plant_id}", response_model=Plant)
+def delete_plant(user_id: int, plant_id: int, db: Session = Depends(get_db)
                           ):
     db_plant = crud.get_plant(db, plant_id=plant_id)
     if db_plant is None:

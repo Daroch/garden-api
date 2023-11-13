@@ -7,24 +7,8 @@ import crud
 router = APIRouter(tags=["Alerts"])
 
 
-@router.get("/alert_types/", response_model=list[schemas.AlertType])
-def read_alert_types(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    alert_types = crud.get_alert_types(db, skip=skip, limit=limit)
-    return alert_types
-
-
-@router.post("/alert_types/", response_model=schemas.AlertType, status_code=201)
-def create_alert_type(alert_type: schemas.AlertTypeCreate, db: Session = Depends(get_db)):
-    db_alert_type = crud.get_alert_type_by_name(
-        db, alert_name=alert_type.alert_name)
-    if db_alert_type:
-        raise HTTPException(
-            status_code=400, detail="Alert type already exists")
-    return crud.create_alert_type(db=db, alert_type=alert_type)
-
-
 @router.get("/users/{user_id}/plants/{plant_id}/alerts/{alert_id}", response_model=schemas.Alert)
-def read_alert(
+def get_alert_details(
     alert_id: int, db: Session = Depends(get_db)
 ):
     db_alert = crud.get_alert(db, alert_id=alert_id)
@@ -34,7 +18,7 @@ def read_alert(
 
 
 @router.get("/users/{user_id}/plants/{plant_id}/alerts/", response_model=list[schemas.Alert])
-def read_alerts_for_plant(plant_id: int, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+def get_alerts_for_plant(plant_id: int, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     alerts = crud.alerts_for_plant(
         db, skip=skip, limit=limit, plant_id=plant_id)
     return alerts
@@ -53,7 +37,7 @@ def create_alert_for_plant(
 
 
 @router.patch("/users/{user_id}/plants/{plant_id}/alerts/{alert_id}", response_model=schemas.Alert)
-def update_alert_for_plant(plant_id: int, alert_id: int, alert: schemas.AlertCreate, db: Session = Depends(get_db)
+def update_alert(plant_id: int, alert_id: int, alert: schemas.AlertCreate, db: Session = Depends(get_db)
                            ):
     db_alert = crud.get_alert(db, alert_id=alert_id)
     if db_alert is None:

@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 import models
-from routers import alerts, categories, journals, plants, users
+from routers import alerts, alerttypes, categories, journals, plants, users
 from database import engine, SessionLocal
 
 models.Base.metadata.create_all(bind=engine)
@@ -19,6 +19,7 @@ app.add_middleware(
     allow_headers=['*']
 )
 app.include_router(alerts.router)
+app.include_router(alerttypes.router)
 app.include_router(categories.router)
 app.include_router(journals.router)
 app.include_router(plants.router)

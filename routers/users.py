@@ -33,22 +33,17 @@ async def login_for_access_token(
 
 
 @router.get("/users/me", response_model=User)
-async def read_users_me(current_user: Annotated[User, Depends(auth.get_current_active_user)]):
+async def get_my_details(current_user: Annotated[User, Depends(auth.get_current_active_user)]):
     return current_user
 
 
 @router.get("/users/me/plants/", response_model=list[Plant])
-async def read_own_plants(
+async def get_my_plants(
     current_user: Annotated[User, Security(
         auth.get_current_active_user, scopes=["plants"])], db: Session = Depends(get_db)
 ):
     db_plants = crud.get_plants_for_user(db, current_user.id)
     return db_plants
-
-
-@router.get("/status/")
-async def read_system_status(current_user: Annotated[User, Depends(auth.get_current_user)]):
-    return {"status": "ok"}
 
 
 @router.post("/users/", response_model=User, status_code=201)
@@ -61,30 +56,14 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
 
 
 @router.get("/users/", response_model=list[User])
-def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+def get_all_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     users = crud.get_users(db, skip=skip, limit=limit)
     return users
 
 
 @router.get("/users/{user_id}", response_model=User)
-def read_user(user_id: int, db: Session = Depends(get_db)):
+def get_user_details(user_id: int, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_id(db, user_id=user_id)
-    if db_user is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    return db_user
-
-
-@router.get("/users2/{name}", response_model=User)
-def read_user_by_name2(name: str, db: Session = Depends(get_db)):
-    db_user = crud.get_user_by_name(db=db, name=name)
-    if db_user is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    return db_user
-
-
-@router.get("/users3/{name}", response_model=UserCreate)
-def read_user_by_name3(name: str, db: Session = Depends(get_db)):
-    db_user = crud.get_user_by_name(db=db, name=name)
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
     return db_user
