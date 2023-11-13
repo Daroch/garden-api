@@ -1,11 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
 from typing import Annotated
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
 from sqlalchemy.orm import Session
 from dependencies import get_db
 import schemas
 import crud
+import auth
 
 router = APIRouter(tags=["Users"])
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -19,7 +20,28 @@ def fake_decode_token(token):
 
 async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
     user = fake_decode_token(token)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid authentication credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
     return user
+
+
+@router.post("/token")
+async def login(form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
+    user_dict = crud.get_user_by_name(form_data.username)
+    if not user_dict:
+        raise HTTPException(
+            status_code=400, detail="Incorrect username or password")
+    user = schemas.UserCreate(**user_dict)
+    hashed_password = auth.get_password_hash(form_data.password)
+    if not hashed_password == user.hashed_password:
+        raise HTTPException(
+            status_code=400, detail="Incorrect username or password")
+
+    return {"access_token": user.name, "token_type": "bearer"}
 
 
 @router.get("/users/me")
