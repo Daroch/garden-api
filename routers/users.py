@@ -1,10 +1,30 @@
 from fastapi import APIRouter, Depends, HTTPException
+from typing import Annotated
+from fastapi.security import OAuth2PasswordBearer
+
 from sqlalchemy.orm import Session
 from dependencies import get_db
 import schemas
 import crud
 
 router = APIRouter(tags=["Users"])
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+
+def fake_decode_token(token):
+    return schemas.User(
+        name=token + "fakedecoded", email="john@example.com"
+    )
+
+
+async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
+    user = fake_decode_token(token)
+    return user
+
+
+@router.get("/users/me")
+async def read_users_me(current_user: Annotated[schemas.User, Depends(get_current_user)]):
+    return current_user
 
 
 @router.post("/users/", response_model=schemas.User, status_code=201)
