@@ -8,7 +8,8 @@ from database import engine, SessionLocal
 models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
 origin = [
-    'http://localhost:3000'
+    'http://localhost:3000',
+    'http://localhost:5173',
 ]
 
 app.add_middleware(

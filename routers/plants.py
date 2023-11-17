@@ -27,6 +27,13 @@ def get_plants_for_user(current_user: Annotated[User, Security(
     return plants
 
 
+@router.get("/plants", response_model=list[Plant])
+def get_all_plants(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    plants = crud.get_plants(
+        db, skip=skip, limit=limit)
+    return plants
+
+
 @router.get("/users/{user_id}/plants/{plant_id}", response_model=Plant)
 def get_plant_details(
     plant_id: int, db: Session = Depends(get_db)
@@ -39,7 +46,7 @@ def get_plant_details(
 
 @router.patch("/users/{user_id}/plants/{plant_id}", response_model=Plant)
 def update_plant(user_id: int, plant_id: int, plant: PlantCreate, db: Session = Depends(get_db)
-                          ):
+                 ):
     db_plant = crud.get_plant(db, plant_id=plant_id)
     if db_plant is None:
         raise HTTPException(status_code=404, detail="Plant not found")
@@ -50,7 +57,7 @@ def update_plant(user_id: int, plant_id: int, plant: PlantCreate, db: Session = 
 
 @router.delete("/users/{user_id}/plants/{plant_id}", response_model=Plant)
 def delete_plant(user_id: int, plant_id: int, db: Session = Depends(get_db)
-                          ):
+                 ):
     db_plant = crud.get_plant(db, plant_id=plant_id)
     if db_plant is None:
         raise HTTPException(status_code=404, detail="Plant not found")
