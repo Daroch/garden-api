@@ -1,21 +1,31 @@
 from typing import Annotated
-from fastapi import APIRouter, Depends, Security, HTTPException
+from fastapi import APIRouter, Depends, Security, UploadFile, File, HTTPException
 from sqlalchemy.orm import Session
 from dependencies import get_db
 from schemas import User, Plant, PlantCreate
 import crud
 import auth
+import shutil
 
 router = APIRouter(tags=["Plants"])
 
 
 @router.post("/users/{user_id}/plants/", response_model=Plant, status_code=201)
-def create_plant(
-    user_id: int, category_id: int, plant: PlantCreate, db: Session = Depends(get_db)
+async def create_plant(
+    user_id: int,
+    category_id: int,
+    imagefile: Annotated[UploadFile, File(..., description="Main image for your Plant")],
+    plant: PlantCreate = Depends(),
+    db: Session = Depends(get_db)
 ):
     db_user = crud.get_user_by_id(db, user_id=user_id)
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
+    new_name = "images/" + '_' + imagefile.filename
+    with open(new_name, "wb") as buffer:
+        shutil.copyfileobj(imagefile.file, buffer)
+
+    plant.image = new_name
     return crud.create_user_plant(db=db, plant=plant, user_id=user_id, category_id=category_id)
 
 
