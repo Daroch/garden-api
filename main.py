@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 import models
 from routers import alerts, alerttypes, categories, journals, plants, users
@@ -7,6 +8,10 @@ from database import engine, SessionLocal
 
 models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
+
+app.mount("/images",
+          StaticFiles(directory="images"), name='images')
+
 origin = [
     'http://localhost:3000',
     'http://localhost:5173',

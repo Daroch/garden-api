@@ -1,11 +1,16 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, Security, UploadFile, File, HTTPException
 from sqlalchemy.orm import Session
+from fastapi.responses import FileResponse
+from pathlib import Path
+import shutil
+
 from dependencies import get_db
+
 from schemas import User, Plant, PlantCreate
 import crud
 import auth
-import shutil
+
 
 router = APIRouter(tags=["Plants"])
 
@@ -21,8 +26,9 @@ async def create_plant(
     db_user = crud.get_user_by_id(db, user_id=user_id)
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
-    new_name = "images/" + '_' + imagefile.filename
-    with open(new_name, "wb") as buffer:
+    new_name = "_".join([str(user_id), "_".join(
+        plant.name.split()), imagefile.filename])
+    with open("images/plants/" + new_name, "wb") as buffer:
         shutil.copyfileobj(imagefile.file, buffer)
 
     plant.image = new_name
@@ -55,13 +61,24 @@ def get_plant_details(
 
 
 @router.patch("/users/{user_id}/plants/{plant_id}", response_model=Plant)
-def update_plant(user_id: int, plant_id: int, plant: PlantCreate, db: Session = Depends(get_db)
-                 ):
+async def update_plant(
+        user_id: int,
+        plant_id: int,
+        imagefile: Annotated[UploadFile, File(..., description="Main image for your Plant")],
+        plant: PlantCreate = Depends(),
+        db: Session = Depends(get_db)
+):
     db_plant = crud.get_plant(db, plant_id=plant_id)
     if db_plant is None:
         raise HTTPException(status_code=404, detail="Plant not found")
     if user_id is not db_plant.owner_id:
         raise HTTPException(status_code=500, detail="This is not your plant")
+    new_name = "_".join([str(user_id), "_".join(
+        plant.name.split()), imagefile.filename])
+    with open("images/plants/" + new_name, "wb") as buffer:
+        shutil.copyfileobj(imagefile.file, buffer)
+
+    plant.image = new_name
     return crud.update_user_plant(db=db, plant_id=plant_id, plant=plant)
 
 
