@@ -19,7 +19,8 @@ router = APIRouter(tags=["Plants"])
 async def create_plant(
     user_id: int,
     category_id: int = Form(...),
-    imagefile: UploadFile = File(...),
+    imagefile: Annotated[UploadFile,
+                         File(..., description="Main image for your Plant")] = None,
     name: str = Form(...),
     description: str = Form(...),
     public: bool = True,
