@@ -13,7 +13,7 @@ def get_all_categories(skip: int = 0, limit: int = 100, db: Session = Depends(ge
     return categories
 
 
-@router.post("/categories/", response_model=schemas.Category, status_code=201)
+@router.post("/addcategory", response_model=schemas.Category, status_code=201)
 def create_category(category: schemas.CategoryCreate, db: Session = Depends(get_db)):
     db_category = crud.get_category_by_name(db, name=category.name)
     if db_category:

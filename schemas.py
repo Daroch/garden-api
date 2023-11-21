@@ -44,7 +44,7 @@ class AlertType(AlertTypeBase):
 class JournalBase(BaseModel):
     title: str
     description: str | None = None
-    image: str | None = None
+    image_url: str | None = None
 
 
 class JournalCreate(JournalBase):
@@ -68,7 +68,7 @@ class PlantBase(BaseModel):
     light_type: str = models.LightType.muypoca
     location: str | None = None
     notes: str | None = None
-    image: str | None = None
+    image_url: str | None = None
 
 
 class PlantCreate(PlantBase):

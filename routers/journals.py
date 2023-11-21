@@ -17,7 +17,7 @@ def get_journal_details(
     return db_journal
 
 
-@router.get("/users/{user_id}/plants/{plant_id}/journals/", response_model=list[schemas.Journal])
+@router.get("/users/{user_id}/plants/{plant_id}/addjournal", response_model=list[schemas.Journal])
 def get_all_journals_for_plant(plant_id: int, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     journals = crud.journals_for_plant(
         db, skip=skip, limit=limit, plant_id=plant_id)
@@ -36,7 +36,7 @@ def create_journal_for_plant(
     return db_journal
 
 
-@router.patch("/users/{user_id}/plants/{plant_id}/journals/{journal_id}", response_model=schemas.Journal)
+@router.patch("/users/{user_id}/plants/{plant_id}/updatejournal/{journal_id}", response_model=schemas.Journal)
 def update_journal(plant_id: int, journal_id: int, journal: schemas.JournalCreate, db: Session = Depends(get_db)
                              ):
     db_journal = crud.get_journal(db, journal_id=journal_id)
