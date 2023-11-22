@@ -51,7 +51,8 @@ class Plant(Base):
     name = Column(String(30), index=True, nullable=False)
     description = Column(String(300), index=True, nullable=True)
     public = Column(Boolean, default=False)
-    owner_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    owner_id = Column(Integer, ForeignKey(
+        "users.id", ondelete="CASCADE"), nullable=False)
     category_id = Column(Integer, ForeignKey("categories.id"), nullable=False)
     irrigation_type = Column(Enum('muypoca', 'poca', 'normal', 'bastante', 'mucha'),
                              name='irrigation_type', nullable=False, default=IrrigationType.muypoca)
@@ -79,7 +80,8 @@ class Journal(Base):
     description = Column(String(500), index=True, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     image_url = Column(String(120), nullable=True)
-    plant_id = Column(Integer, ForeignKey("plants.id"), nullable=False)
+    plant_id = Column(Integer, ForeignKey(
+        "plants.id", ondelete="CASCADE"), nullable=False)
 
     plant = relationship("Plant", back_populates="journals")
 
@@ -105,7 +107,8 @@ class Alert(Base):
     frecuency = Column(Integer, nullable=True)
     alert_type_id = Column(Integer, ForeignKey(
         "alert_types.id"), nullable=False)
-    plant_id = Column(Integer, ForeignKey("plants.id"), nullable=False)
+    plant_id = Column(Integer, ForeignKey(
+        "plants.id", ondelete="CASCADE"), nullable=False)
 
     alert_type = relationship("AlertType", back_populates="alerts")
     plant = relationship("Plant", back_populates="alerts")
