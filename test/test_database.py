@@ -1,6 +1,32 @@
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 from fastapi.testclient import TestClient
-from main import app
 
+
+from database import TEST_URL_CONNECTION, Base
+import models
+from main import app
+from dependencies import get_db
+
+
+Testingengine = create_engine(TEST_URL_CONNECTION)
+TestingSessionLocal = sessionmaker(
+    autoflush=False, autocommit=False, bind=Testingengine)
+
+models.Base.metadata.create_all(bind=Testingengine)
+
+
+def override_get_db():
+    try:
+        db = TestingSessionLocal()
+        yield db
+    finally:
+        db.close()
+
+
+app.dependency_overrides[get_db] = override_get_db
+
+db = override_get_db()
 client = TestClient(app)
 
 
@@ -24,7 +50,7 @@ def test_create_user_ok():
     response2 = client.delete(f"users/{data['id']}")
 
 
-def test_create_user_duplicate():
+def test_create_user_duplicate_email():
     user = {
         "email": "frodo@gmail.com",
         "name": "Frodo",
