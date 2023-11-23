@@ -27,7 +27,7 @@ async def login_for_access_token(
         )
     access_token_expires = timedelta(minutes=30)
     access_token = auth.create_access_token(
-        data={"sub": user.name, "scopes": form_data.scopes}, expires_delta=access_token_expires
+        data={"sub": user.name}, expires_delta=access_token_expires
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
@@ -40,7 +40,7 @@ async def get_my_details(current_user: Annotated[User, Depends(auth.get_current_
 @router.get("/users/me/plants/", response_model=list[Plant])
 async def get_my_plants(
     current_user: Annotated[User, Security(
-        auth.get_current_active_user, scopes=["plants"])], db: Session = Depends(get_db)
+        auth.get_current_active_user)], db: Session = Depends(get_db)
 ):
     db_plants = crud.get_plants_for_user(db, current_user.id)
     return db_plants

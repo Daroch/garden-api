@@ -45,7 +45,7 @@ async def create_plant(
 
 @router.get("/users/{user_id}/plants", response_model=list[Plant])
 def get_plants_for_user(current_user: Annotated[User, Security(
-        auth.get_current_active_user, scopes=["plants"])], skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+        auth.get_current_active_user)], skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     plants = crud.get_plants_for_user(
         db, skip=skip, limit=limit, user_id=current_user.id)
     return plants
