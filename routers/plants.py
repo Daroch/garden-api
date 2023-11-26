@@ -17,6 +17,8 @@ router = APIRouter(tags=["Plants"])
 
 @router.post("/users/{user_id}/addplant", response_model=Plant, status_code=201)
 async def create_plant(
+    current_user: Annotated[User, Security(
+        auth.get_current_active_user)],
     user_id: int,
     category_id: int = Form(...),
     imagefile: Annotated[UploadFile,
