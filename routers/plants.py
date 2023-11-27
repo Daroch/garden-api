@@ -24,7 +24,7 @@ async def create_plant(
     imagefile: Annotated[UploadFile,
                          File(..., description="Main image for your Plant")] = None,
     name: str = Form(...),
-    description: str = Form(...),
+    description: str = Form(None),
     public: bool = True,
     irrigation_type: str = Form(...),
     light_type: str = Form(...),
