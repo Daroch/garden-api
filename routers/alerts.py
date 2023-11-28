@@ -17,10 +17,17 @@ def get_alert_details(
     return db_alert
 
 
-@router.get("/users/{user_id}/plants/{plant_id}/alerts/", response_model=list[schemas.Alert])
+@router.get("/users/{user_id}/plants/{plant_id}/alerts", response_model=list[schemas.Alert])
 def get_alerts_for_plant(plant_id: int, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    alerts = crud.alerts_for_plant(
+    alerts = crud.get_alerts_for_plant(
         db, skip=skip, limit=limit, plant_id=plant_id)
+    return alerts
+
+
+@router.get("/users/{user_id}/alerts", response_model=list[schemas.Alert])
+def get_alerts_for_user(user_id: int, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    alerts = crud.get_alerts_for_user(
+        db, skip=skip, limit=limit, user_id=user_id)
     return alerts
 
 
