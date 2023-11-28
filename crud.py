@@ -52,9 +52,9 @@ def get_plants_for_user(db: Session, user_id: int, skip: int = 0, limit: int = 1
     return db.query(Plant).filter(Plant.owner_id == user_id).offset(skip).limit(limit).all()
 
 
-def create_user_plant(db: Session, plant: PlantCreate, user_id: int, category_id: int):
+def create_user_plant(db: Session, plant: PlantCreate, user_id: int):
     db_plant = Plant(**plant.dict(), owner_id=user_id,
-                     category_id=category_id, created_at=datetime.now())
+                     created_at=datetime.now())
     db.add(db_plant)
     db.commit()
     db.refresh(db_plant)

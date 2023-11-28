@@ -4,11 +4,12 @@ import models
 
 
 class AlertBase(BaseModel):
+    title: str | None = None
     notes: str | None = None
-    start_date: datetime
-    status: bool
-    repeat: bool
-    frecuency: int
+    start_date: datetime = datetime.now()
+    status: bool = True
+    repeat: bool = False
+    frecuency: int | None = None
 
 
 class AlertCreate(AlertBase):
@@ -27,6 +28,7 @@ class Alert(AlertBase):
 
 class AlertTypeBase(BaseModel):
     alert_name: str
+    alert_description: str | None = None
 
 
 class AlertTypeCreate(AlertTypeBase):
@@ -63,9 +65,10 @@ class Journal(JournalBase):
 class PlantBase(BaseModel):
     name: str
     description: str | None = None
-    public: bool
-    irrigation_type: str = models.IrrigationType.muypoca
-    light_type: str = models.LightType.muypoca
+    category_id: int
+    public: bool = True
+    irrigation_type: str = models.IrrigationType.normal
+    light_type: str = models.LightType.normal
     location: str | None = None
     notes: str | None = None
     image_url: str | None = None
@@ -78,7 +81,6 @@ class PlantCreate(PlantBase):
 class Plant(PlantBase):
     id: int
     owner_id: int
-    category_id: int
     created_at: datetime
     journals: list[Journal] = []
     alerts: list[Alert] = []

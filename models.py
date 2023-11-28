@@ -11,8 +11,8 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(50), index=True, nullable=False)
     email = Column(String(50), unique=True, index=True, nullable=False)
-    hashed_password = Column(String(128))
-    is_active = Column(Boolean, default=True)
+    hashed_password = Column(String(128), nullable=False)
+    is_active = Column(Boolean, default=True, nullable=False)
 
     plants = relationship("Plant", back_populates="owner",
                           cascade='all,delete')
@@ -50,7 +50,7 @@ class Plant(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(30), index=True, nullable=False)
     description = Column(String(300), index=True, nullable=True)
-    public = Column(Boolean, default=False)
+    public = Column(Boolean, default=False, nullable=False)
     owner_id = Column(Integer, ForeignKey(
         "users.id", ondelete="CASCADE"), nullable=False)
     category_id = Column(Integer, ForeignKey("categories.id"), nullable=False)
@@ -61,7 +61,8 @@ class Plant(Base):
     location = Column(String(30), nullable=True)
     notes = Column(String(500), nullable=True)
     image_url = Column(String(120), nullable=True)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    created_at = Column(DateTime(timezone=True),
+                        server_default=func.now(), nullable=False)
 
     journals = relationship(
         "Journal", back_populates="plant", cascade="all,delete")
@@ -78,7 +79,8 @@ class Journal(Base):
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String(100), index=True, nullable=False, default=func.now())
     description = Column(String(500), index=True, nullable=True)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    created_at = Column(DateTime(timezone=True),
+                        server_default=func.now(), nullable=False)
     image_url = Column(String(120), nullable=True)
     plant_id = Column(Integer, ForeignKey(
         "plants.id", ondelete="CASCADE"), nullable=False)
@@ -91,6 +93,7 @@ class AlertType(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     alert_name = Column(String(30), unique=True, index=True, nullable=False)
+    alert_description = Column(String(200), index=True, nullable=True)
 
     alerts = relationship("Alert", back_populates="alert_type")
 
@@ -100,10 +103,13 @@ class Alert(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     notes = Column(String(200), index=True, nullable=True)
-    created_at = Column(DateTime(timezone=True), server_default=func.now())
-    start_date = Column(DateTime(timezone=True), server_default=func.now())
-    status = Column(Boolean, default=True)
-    repeat = Column(Boolean, default=True)
+    title = Column(String(100), index=True, nullable=True)
+    created_at = Column(DateTime(timezone=True),
+                        server_default=func.now(), nullable=False)
+    start_date = Column(DateTime(timezone=True),
+                        server_default=func.now(), nullable=False)
+    status = Column(Boolean, default=True, nullable=False)
+    repeat = Column(Boolean, default=True, nullable=False)
     frecuency = Column(Integer, nullable=True)
     alert_type_id = Column(Integer, ForeignKey(
         "alert_types.id"), nullable=False)

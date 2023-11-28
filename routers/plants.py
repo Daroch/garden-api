@@ -28,10 +28,12 @@ async def create_plant(
     public: bool = True,
     irrigation_type: str = Form(...),
     light_type: str = Form(...),
+    location: str = Form(None),
+    notes: str = Form(None),
     db: Session = Depends(get_db)
 ):
-    plant = PlantCreate(owner_id=user_id, name=name, category_id=category_id, public=public,
-                        irrigation_type=irrigation_type, light_type=light_type, description=description)
+    plant = PlantCreate(name=name, description=description, category_id=category_id, public=public,
+                        irrigation_type=irrigation_type, light_type=light_type, location=location, notes=notes)
     db_user = crud.get_user_by_id(db, user_id=user_id)
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
@@ -42,7 +44,7 @@ async def create_plant(
             shutil.copyfileobj(imagefile.file, buffer)
         plant.image_url = new_name
 
-    return crud.create_user_plant(db=db, plant=plant, user_id=user_id, category_id=category_id)
+    return crud.create_user_plant(db=db, plant=plant, user_id=user_id)
 
 
 @router.get("/users/{user_id}/plants", response_model=list[Plant])
@@ -72,13 +74,25 @@ def get_plant_details(
 
 @router.patch("/users/{user_id}/updateplant/{plant_id}", response_model=Plant)
 async def update_plant(
+        current_user: Annotated[User, Security(
+        auth.get_current_active_user)],
         user_id: int,
         plant_id: int,
+        category_id: int = Form(...),
         imagefile: Annotated[UploadFile,
                              File(..., description="Main image for your Plant")] = None,
-        plant: PlantCreate = Depends(),
+        name: str = Form(...),
+        description: str = Form(None),
+        public: bool = True,
+        irrigation_type: str = Form(...),
+        light_type: str = Form(...),
+        location: str = Form(None),
+        notes: str = Form(None),
         db: Session = Depends(get_db)
 ):
+    plant = PlantCreate(name=name, description=description, category_id=category_id, public=public,
+                        irrigation_type=irrigation_type, light_type=light_type, location=location, notes=notes)
+
     db_plant = crud.get_plant(db, plant_id=plant_id)
     if db_plant is None:
         raise HTTPException(status_code=404, detail="Plant not found")
