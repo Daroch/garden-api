@@ -52,6 +52,10 @@ def get_plants_for_user(db: Session, user_id: int, skip: int = 0, limit: int = 1
     return db.query(Plant).filter(Plant.owner_id == user_id).offset(skip).limit(limit).all()
 
 
+def get_plant_latest_id(db: Session):
+    return db.query(Plant).order_by(Plant.id.desc()).first().id
+
+
 def create_user_plant(db: Session, plant: PlantCreate, user_id: int):
     db_plant = Plant(**plant.dict(), owner_id=user_id,
                      created_at=datetime.now())
