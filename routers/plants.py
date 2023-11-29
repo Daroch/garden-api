@@ -94,10 +94,11 @@ async def update_plant(
         light_type: str = Form(...),
         location: str = Form(None),
         notes: str = Form(None),
+        image_url: str = Form(None),
         db: Session = Depends(get_db)
 ):
     plant = PlantCreate(name=name, description=description, category_id=category_id, public=public,
-                        irrigation_type=irrigation_type, light_type=light_type, location=location, notes=notes)
+                        irrigation_type=irrigation_type, light_type=light_type, location=location, notes=notes, image_url=image_url)
 
     db_plant = crud.get_plant(db, plant_id=plant_id)
     if db_plant is None:
