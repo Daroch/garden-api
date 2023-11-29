@@ -1,3 +1,5 @@
+import os
+from pathvalidate import sanitize_filename
 from typing import Annotated
 from fastapi import APIRouter, Depends, Security, UploadFile, File, Form, HTTPException
 from sqlalchemy.orm import Session
@@ -38,11 +40,15 @@ async def create_plant(
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
     if imagefile:
-        new_name = "_".join([str(user_id), "_".join(
-            plant.name.split()), imagefile.filename])
-        with open("images/plants/" + new_name, "wb") as buffer:
+        # create a folder with next id and sanitize filename
+        next_plant_id = crud.get_plant_latest_id(db=db)+1
+        folder = "images/plants/" + str(user_id) + "/" + str(next_plant_id)
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+        clean_name = sanitize_filename(imagefile.filename)
+        with open(folder + "/" + clean_name, "wb") as buffer:
             shutil.copyfileobj(imagefile.file, buffer)
-        plant.image_url = new_name
+        plant.image_url = clean_name
 
     return crud.create_user_plant(db=db, plant=plant, user_id=user_id)
 
@@ -99,11 +105,14 @@ async def update_plant(
     if user_id is not db_plant.owner_id:
         raise HTTPException(status_code=500, detail="This is not your plant")
     if imagefile:
-        new_name = "_".join([str(user_id), "_".join(
-            plant.name.split()), imagefile.filename])
-        with open("images/plants/" + new_name, "wb") as buffer:
+        # Verify a folder and sanitize filename
+        folder = "images/plants/" + str(user_id) + "/" + str(plant_id)
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+        clean_name = sanitize_filename(imagefile.filename)
+        with open(folder + "/" + clean_name, "wb") as buffer:
             shutil.copyfileobj(imagefile.file, buffer)
-        plant.image_url = new_name
+        plant.image_url = clean_name
     return crud.update_user_plant(db=db, plant_id=plant_id, plant=plant)
 
 
