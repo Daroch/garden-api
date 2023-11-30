@@ -33,25 +33,25 @@ def get_alerts_for_user(user_id: int, skip: int = 0, limit: int = 100, db: Sessi
 
 @router.post("/users/{user_id}/plants/{plant_id}/addalert", response_model=schemas.Alert, status_code=201)
 def create_alert_for_plant(
-    plant_id: int, alert_type_id: int, alert: schemas.AlertCreate, db: Session = Depends(get_db)
+    plant_id: int, alert: schemas.AlertCreate, db: Session = Depends(get_db)
 ):
     db_plant = crud.get_plant(db, plant_id=plant_id)
     if db_plant is None:
         raise HTTPException(status_code=404, detail="Plant not found")
     db_alert = crud.create_alert_plant(
-        db=db, alert=alert, plant_id=plant_id, alert_type_id=alert_type_id)
+        db=db, alert=alert, plant_id=plant_id)
     return db_alert
 
 
 @router.patch("/users/{user_id}/plants/{plant_id}/updatealert/{alert_id}", response_model=schemas.Alert)
-def update_alert(plant_id: int, alert_id: int, alert: schemas.AlertCreate, db: Session = Depends(get_db)
+def update_alert(user_id: int, plant_id: int, alert_id: int, alert: schemas.AlertCreate, db: Session = Depends(get_db)
                  ):
     db_alert = crud.get_alert(db, alert_id=alert_id)
     if db_alert is None:
         raise HTTPException(status_code=404, detail="Alert not found")
     if plant_id is not db_alert.plant_id:
         raise HTTPException(
-            status_code=500, detail="This alert i snot for that plant")
+            status_code=500, detail="This alert is not for that plant")
     return crud.update_plant_alert(db=db, plant_id=plant_id, alert=alert)
 
 

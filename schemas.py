@@ -4,6 +4,7 @@ import models
 
 
 class AlertBase(BaseModel):
+    alert_type_id: int = 1
     title: str | None = None
     notes: str | None = None
     start_date: datetime = datetime.now()
@@ -20,7 +21,6 @@ class Alert(AlertBase):
     id: int
     created_at: datetime
     plant_id: int
-    alert_type_id: int
 
     class ConfigDict:
         from_attributes = True
