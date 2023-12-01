@@ -45,7 +45,7 @@ def update_journal(plant_id: int, journal_id: int, journal: schemas.JournalCreat
     if plant_id is not db_journal.plant_id:
         raise HTTPException(
             status_code=500, detail="This journal i snot for that plant")
-    return crud.update_plant_journal(db=db, plant_id=plant_id, plant=plant)
+    return crud.update_journal_plant(db=db, plant_id=plant_id, plant=plant)
 
 
 @router.delete("/users/{user_id}/plants/{plant_id}/journals/{journal_id}", response_model=schemas.Journal)
