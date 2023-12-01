@@ -49,10 +49,8 @@ def update_alert(user_id: int, plant_id: int, alert_id: int, alert: schemas.Aler
     db_alert = crud.get_alert(db, alert_id=alert_id)
     if db_alert is None:
         raise HTTPException(status_code=404, detail="Alert not found")
-    if plant_id is not db_alert.plant_id:
-        raise HTTPException(
-            status_code=500, detail="This alert is not for that plant")
-    return crud.update_alert_plant(db=db, plant_id=plant_id, alert=alert)
+    db_alert.plant_id = plant_id
+    return crud.update_alert_plant(db=db, alert_id=alert_id, alert=alert)
 
 
 @router.delete("/users/{user_id}/plants/{plant_id}/alerts/{alert_id}", response_model=schemas.Alert)
