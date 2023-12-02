@@ -60,3 +60,21 @@ def delete_alert(alert_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Alert not found")
     db_alert = crud.delete_alert_by_id(db, alert_id=alert_id)
     return db_alert
+
+
+@router.get("/alerts_to_email")
+def get_all_alerts_to_send_email(db: Session = Depends(get_db)):
+    alerts = crud.get_all_alerts_to_send_email(db)
+    return alerts
+
+
+@router.get("/all_alerts")
+def get_all_alerts(db: Session = Depends(get_db)):
+    alerts = crud.get_all_alerts(db)
+    return alerts
+
+
+@router.get("/prueba")
+def get_prueba(db: Session = Depends(get_db)):
+    alerts = crud.get_prueba(db)
+    return alerts
