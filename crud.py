@@ -187,3 +187,12 @@ def delete_alert_by_id(db: Session, alert_id: int):
     db.delete(db_alert)
     db.commit()
     return db_alert
+
+
+def get_all_alerts(db: Session, skip: int = 0, limit: int = 100):
+    alerts = db.query(Alert).all()
+    return alerts
+
+
+def get_alerts_to_send_email(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(Alert).filter(Alert.start_date < datetime.now()).filter(Alert.status == True).all()
