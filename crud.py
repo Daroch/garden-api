@@ -189,17 +189,10 @@ def delete_alert_by_id(db: Session, alert_id: int):
     return db_alert
 
 
-def get_all_alerts_to_send_email(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(Alert).filter(Alert.start_date < datetime.now()).join(Plant).join(User).all()
-
-
 def get_all_alerts(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(Alert).join(Plant).join(User).all()
+    alerts = db.query(Alert).all()
+    return alerts
 
 
-def get_prueba(db: Session, skip: int = 0, limit: int = 100):
-    for u, p, a in db.query(User, Plant, Alert).filter(User.id == Plant.owner_id).filter(Plant.id == Alert.plant_id).all():
-        listofusers = [u]
-        listofplants = [p]
-        listofalerts = [a]
-        return listofusers, listofplants, listofalerts
+def get_alerts_to_send_email(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(Alert).filter(Alert.start_date < datetime.now()).filter(Alert.status == True).all()

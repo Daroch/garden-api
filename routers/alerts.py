@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from dependencies import get_db
 import schemas
 import crud
+from alerts_system import send_alerts
 
 router = APIRouter(tags=["Alerts"])
 
@@ -62,19 +63,18 @@ def delete_alert(alert_id: int, db: Session = Depends(get_db)):
     return db_alert
 
 
-@router.get("/alerts_to_email")
-def get_all_alerts_to_send_email(db: Session = Depends(get_db)):
-    alerts = crud.get_all_alerts_to_send_email(db)
-    return alerts
-
-
 @router.get("/all_alerts")
 def get_all_alerts(db: Session = Depends(get_db)):
     alerts = crud.get_all_alerts(db)
     return alerts
 
 
-@router.get("/prueba")
-def get_prueba(db: Session = Depends(get_db)):
-    alerts = crud.get_prueba(db)
+@router.get("/alerts_to_email")
+def get_alerts_to_send_email(db: Session = Depends(get_db)):
+    alerts = crud.get_alerts_to_send_email(db)
     return alerts
+
+
+@router.get("/send_alerts_to_email")
+def send_alerts_to_email(db: Session = Depends(get_db)):
+    send_alerts(db)

@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from models import User, Plant, AlertType, Alert
 from schemas import AlertCreate
 from sqlalchemy import select
+from crud import get_alerts_to_send_email, update_alert_plant
 
 
 EMAIL_USERNAME = os.getenv('EMAIL_USERNAME')
@@ -66,3 +67,24 @@ def send_alert(db: Session, alert_id: int):
         email_alert_message = email_alert_message + email_alert_text_repeat + "\n\n"
     email_alert_message = email_alert_message + "Saludos,\n" + "Garden App"
     send_email(receiver, email_alert_subject, email_alert_message)
+
+
+def send_alerts(db: Session):
+    # obtenemos las alertas
+    alerts = get_alerts_to_send_email(db)
+    for alert in alerts:
+        # si la alerta es periodica, obtenemos la nueva fecha y actualizamos
+        if (alert.repeat == True):
+            alert.start_date = datetime.now()+timedelta(days=alert.frecuency)
+            print("fecha actualizada")
+
+        else:
+            # si no es periodica, mantenemos la fecha y desactivamos la alerta
+            alert.status = False
+            print("alerta desactivada")
+
+        # actualizamos los datos de la alerta
+        db_update = update_alert_plant(db, alert.id, AlertCreate(alert_type_id=alert.alert_type_id, plant_id=alert.plant_id, title=alert.title, notes=alert.notes,
+                                                                 start_date=alert.start_date, repeat=alert.repeat, frecuency=alert.frecuency, status=alert.status))
+        # enviamos el correo
+        send_alert(db, alert.id)
