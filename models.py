@@ -27,13 +27,15 @@ class Category(Base):
 
     plants = relationship("Plant", back_populates="category")
 
+#
+
 
 class LevelType(str, Enum):
-    muypoca = "muypoca"
-    poca = "poca"
-    normal = "normal"
-    bastante = "bastante"
-    mucha = "mucha"
+    level1 = "level1"
+    level1 = "level2"
+    level3 = "level3"
+    level4 = "level4"
+    level5 = "level5"
 
 
 class IrrigationType(LevelType):
@@ -54,10 +56,10 @@ class Plant(Base):
     owner_id = Column(Integer, ForeignKey(
         "users.id", ondelete="CASCADE"), nullable=False)
     category_id = Column(Integer, ForeignKey("categories.id"), nullable=False)
-    irrigation_type = Column(Enum('muypoca', 'poca', 'normal', 'bastante', 'mucha'),
-                             name='irrigation_type', nullable=False, default=IrrigationType.muypoca)
-    light_type = Column(Enum('muypoca', 'poca', 'normal', 'bastante', 'mucha'),
-                        name='light_type', nullable=False, default=LightType.muypoca)
+    irrigation_type = Column(Enum('level1', 'level2', 'level3', 'level4', 'level5'),
+                             name='irrigation_type', nullable=False, default=IrrigationType.level3)
+    light_type = Column(Enum('level1', 'level2', 'level3', 'level4', 'level5'),
+                        name='light_type', nullable=False, default=LightType.level3)
     location = Column(String(30), nullable=True)
     notes = Column(String(500), nullable=True)
     image_url = Column(String(120), nullable=True)
