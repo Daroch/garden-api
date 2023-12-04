@@ -112,6 +112,14 @@ def get_journals_for_plant(db: Session, plant_id: int, skip: int = 0, limit: int
     return db.query(Journal).filter(Journal.plant_id == plant_id).offset(skip).limit(limit).all()
 
 
+def get_journals_for_user(db: Session, user_id: int, skip: int = 0, limit: int = 100):
+    return db.query(Journal).join(Plant).filter(Plant.owner_id == user_id).order_by(Plant.id).offset(skip).limit(limit).all()
+
+
+def get_journal_latest_id(db: Session):
+    return db.query(Journal).order_by(Journal.id.desc()).first().id
+
+
 def create_journal_plant(db: Session, journal: JournalCreate, plant_id: int):
     db_journal = Journal(**journal.dict(), plant_id=plant_id,
                          created_at=datetime.now())
@@ -153,7 +161,7 @@ def create_alert_type(db: Session, alert_type: AlertTypeCreate):
     return db_alert_type
 
 
-def get_alert(db: Session, alert_id: int):
+def get_alert_details(db: Session, alert_id: int):
     return db.query(Alert).filter(Alert.id == alert_id).first()
 
 
@@ -162,7 +170,7 @@ def get_alerts_for_plant(db: Session, plant_id: int, skip: int = 0, limit: int =
 
 
 def get_alerts_for_user(db: Session, user_id: int, skip: int = 0, limit: int = 100):
-    return db.query(Alert).join(Plant).filter(Plant.owner_id == user_id).offset(skip).limit(limit).all()
+    return db.query(Alert).join(Plant).filter(Plant.owner_id == user_id).order_by(Plant.id).offset(skip).limit(limit).all()
 
 
 def create_alert_plant(db: Session, alert: AlertCreate, plant_id: int):
