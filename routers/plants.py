@@ -27,14 +27,14 @@ async def create_plant(
                          File(..., description="Main image for your Plant")] = None,
     name: str = Form(...),
     description: str = Form(None),
-    public: bool = Form(...),
+    plant_public: bool = Form(...),
     irrigation_type: str = Form(...),
     light_type: str = Form(...),
     location: str = Form(None),
     notes: str = Form(None),
     db: Session = Depends(get_db)
 ):
-    plant = PlantCreate(name=name, description=description, category_id=category_id, public=public,
+    plant = PlantCreate(name=name, description=description, category_id=category_id, plant_public=plant_public,
                         irrigation_type=irrigation_type, light_type=light_type, location=location, notes=notes)
     db_user = crud.get_user_by_id(db, user_id=user_id)
     if db_user is None:
@@ -89,7 +89,7 @@ async def update_plant(
                              File(..., description="Main image for your Plant")] = None,
         name: str = Form(...),
         description: str = Form(None),
-        public: bool = Form(...),
+        plant_public: bool = Form(...),
         irrigation_type: str = Form(...),
         light_type: str = Form(...),
         location: str = Form(None),
@@ -97,7 +97,7 @@ async def update_plant(
         image_url: str = Form(None),
         db: Session = Depends(get_db)
 ):
-    plant = PlantCreate(name=name, description=description, category_id=category_id, public=public,
+    plant = PlantCreate(name=name, description=description, category_id=category_id, plant_public=plant_public,
                         irrigation_type=irrigation_type, light_type=light_type, location=location, notes=notes, image_url=image_url)
 
     db_plant = crud.get_plant(db, plant_id=plant_id)

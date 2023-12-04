@@ -52,7 +52,7 @@ class Plant(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(30), index=True, nullable=False)
     description = Column(String(300), index=True, nullable=True)
-    public = Column(Boolean, default=False, nullable=False)
+    plant_public = Column(Boolean, default=False, nullable=False)
     owner_id = Column(Integer, ForeignKey(
         "users.id", ondelete="CASCADE"), nullable=False)
     category_id = Column(Integer, ForeignKey("categories.id"), nullable=False)

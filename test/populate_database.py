@@ -3,6 +3,7 @@ from main import app
 
 client = TestClient(app)
 
+
 def test_populate():
     response = client.get("/users/")
     assert response.status_code == 200, response.text
@@ -35,7 +36,7 @@ def test_populate():
     plant1 = {
         "name": "Aloe Vera",
         "description": "planta medicinal",
-        "public": True,
+        "plant_public": True,
         "irrigation_type": "muypoca",
         "light_type": "poca",
         "location": "balcón",
@@ -45,7 +46,7 @@ def test_populate():
     plant2 = {
         "name": "Ficus",
         "description": "planta muy longeva y agradecida",
-        "public": True,
+        "plant_public": True,
         "irrigation_type": "bastante",
         "light_type": "poca",
         "location": "interior",
@@ -55,7 +56,7 @@ def test_populate():
     plant3 = {
         "name": "Albahaca",
         "description": "Especia para salsas y aderezos",
-        "public": True,
+        "plant_public": True,
         "irrigation_type": "bastante",
         "light_type": "poca",
         "location": "interior",
@@ -99,19 +100,22 @@ def test_populate():
         "repeat": True,
         "frecuency": 10
     }
-    response = client.post("/users/",json=user1)
-    response = client.post("/users/",json=user2)
-    response = client.post("/users/",json=user3)
-    response = client.post("/categories/",json=category1)
-    response = client.post("/categories/",json=category2)
-    response = client.post("/users/1/plants?category_id=1",json=plant1)
-    response = client.post("/users/1/plants?category_id=1",json=plant2)
-    response = client.post("/users/2/plants?category_id=2",json=plant3)
-    response = client.post("/users/1/plants/1/journals",json=journal1)
-    response = client.post("/users/1/plants/1/journals",json=journal2)
-    response = client.post("/alert_types/",json=alert_type1)
-    response = client.post("/alert_types/",json=alert_type2)
-    response = client.post("/users/1/plants/1/alerts?alert_type_id=1",json=alert1)
-    response = client.post("/users/1/plants/1/alerts?alert_type_id=1",json=alert2)
-    response = client.post("/users/1/plants/3/alerts?alert_type_id=1",json=alert3)
+    response = client.post("/users/", json=user1)
+    response = client.post("/users/", json=user2)
+    response = client.post("/users/", json=user3)
+    response = client.post("/categories/", json=category1)
+    response = client.post("/categories/", json=category2)
+    response = client.post("/users/1/plants?category_id=1", json=plant1)
+    response = client.post("/users/1/plants?category_id=1", json=plant2)
+    response = client.post("/users/2/plants?category_id=2", json=plant3)
+    response = client.post("/users/1/plants/1/journals", json=journal1)
+    response = client.post("/users/1/plants/1/journals", json=journal2)
+    response = client.post("/alert_types/", json=alert_type1)
+    response = client.post("/alert_types/", json=alert_type2)
+    response = client.post(
+        "/users/1/plants/1/alerts?alert_type_id=1", json=alert1)
+    response = client.post(
+        "/users/1/plants/1/alerts?alert_type_id=1", json=alert2)
+    response = client.post(
+        "/users/1/plants/3/alerts?alert_type_id=1", json=alert3)
     return 'Hecho, datos añadidos!'

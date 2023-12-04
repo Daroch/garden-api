@@ -66,7 +66,7 @@ class PlantBase(BaseModel):
     name: str
     description: str | None = None
     category_id: int
-    public: bool = True
+    plant_public: bool = True
     irrigation_type: str = models.IrrigationType.level3
     light_type: str = models.LightType.level3
     location: str | None = None
