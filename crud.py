@@ -53,6 +53,8 @@ def get_plants_for_user(db: Session, user_id: int, skip: int = 0, limit: int = 1
 
 
 def get_plant_latest_id(db: Session):
+    if db.query(Plant).count() == 0:
+        return 0
     return db.query(Plant).order_by(Plant.id.desc()).first().id
 
 
@@ -117,6 +119,8 @@ def get_journals_for_user(db: Session, user_id: int, skip: int = 0, limit: int =
 
 
 def get_journal_latest_id(db: Session):
+    if db.query(Journal).count() == 0:
+        return 0
     return db.query(Journal).order_by(Journal.id.desc()).first().id
 
 
