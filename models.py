@@ -56,9 +56,9 @@ class Plant(Base):
     owner_id = Column(Integer, ForeignKey(
         "users.id", ondelete="CASCADE"), nullable=False)
     category_id = Column(Integer, ForeignKey("categories.id"), nullable=False)
-    irrigation_type = Column(Enum('level1', 'level2', 'level3', 'level4', 'level5'),
+    irrigation_type = Column(Enum('level1', 'level2', 'level3', 'level4', 'level5', name='irrigation_type'),
                              name='irrigation_type', nullable=False, default=IrrigationType.level3)
-    light_type = Column(Enum('level1', 'level2', 'level3', 'level4', 'level5'),
+    light_type = Column(Enum('level1', 'level2', 'level3', 'level4', 'level5', name='light_type'),
                         name='light_type', nullable=False, default=LightType.level3)
     location = Column(String(30), nullable=True)
     notes = Column(String(500), nullable=True)
