@@ -21,7 +21,7 @@ def get_journal_details(
     return db_journal
 
 
-@router.get("/users/{user_id}/plants/{plant_id}/journal", response_model=list[Journal])
+@router.get("/users/{user_id}/plants/{plant_id}/journals", response_model=list[Journal])
 def get_journals_for_plant(plant_id: int, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     journals = crud.get_journals_for_plant(
         db, skip=skip, limit=limit, plant_id=plant_id)
