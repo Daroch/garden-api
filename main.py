@@ -1,4 +1,5 @@
 import time
+import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -22,10 +23,9 @@ celery = Celery(
 app.mount("/images",
           StaticFiles(directory="images"), name='images')
 
-origin = [
-    'http://localhost:3000',
-    'http://localhost:5173',
-]
+allow_origin = os.getenv('ALLOW_ORIGIN')
+origin = allow_origin.split(',') if allow_origin else [
+    'http://localhost:3000', 'http://localhost:5173']
 
 app.add_middleware(
     CORSMiddleware,
