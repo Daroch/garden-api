@@ -23,8 +23,8 @@ celery = Celery(
 app.mount("/images",
           StaticFiles(directory="images"), name='images')
 
-allow_origin = os.getenv('ALLOW_ORIGIN')
-origin = allow_origin.split(',') if allow_origin else [
+ALLOW_ORIGIN = os.getenv('ALLOW_ORIGIN')
+origin = ALLOW_ORIGIN.split(',') if ALLOW_ORIGIN else [
     'http://localhost:3000', 'http://localhost:5173']
 
 app.add_middleware(

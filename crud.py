@@ -187,7 +187,7 @@ def create_alert_plant(db: Session, alert: AlertCreate, plant_id: int):
 
 
 def update_alert_plant(db: Session, alert_id: int, alert: AlertCreate):
-    db_alert = get_alert(db, alert_id=alert_id)
+    db_alert = get_alert_details(db, alert_id=alert_id)
     for key, value in alert:
         setattr(db_alert, key, value)
     db.commit()

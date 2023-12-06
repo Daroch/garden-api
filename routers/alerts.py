@@ -47,7 +47,7 @@ def create_alert_for_plant(
 @router.patch("/users/{user_id}/plants/{plant_id}/updatealert/{alert_id}", response_model=Alert)
 def update_alert(user_id: int, plant_id: int, alert_id: int, alert: AlertCreate, db: Session = Depends(get_db)
                  ):
-    db_alert = crud.get_alert(db, alert_id=alert_id)
+    db_alert = crud.get_alert_details(db, alert_id=alert_id)
     if db_alert is None:
         raise HTTPException(status_code=404, detail="Alert not found")
     db_alert.plant_id = plant_id
@@ -56,7 +56,7 @@ def update_alert(user_id: int, plant_id: int, alert_id: int, alert: AlertCreate,
 
 @router.delete("/users/{user_id}/plants/{plant_id}/alerts/{alert_id}", response_model=Alert)
 def delete_alert(alert_id: int, db: Session = Depends(get_db)):
-    db_alert = crud.get_alert(db, alert_id=alert_id)
+    db_alert = crud.get_alert_details(db, alert_id=alert_id)
     if db_alert is None:
         raise HTTPException(status_code=404, detail="Alert not found")
     db_alert = crud.delete_alert_by_id(db, alert_id=alert_id)
