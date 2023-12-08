@@ -39,6 +39,8 @@ async def create_plant(
     db_user = crud.get_user_by_id(db, user_id=user_id)
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
+    if user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="This is not your user")
     if imagefile:
         # create a folder with next id and sanitize filename
         next_plant_id = crud.get_plant_latest_id(db=db)+1
@@ -57,7 +59,7 @@ async def create_plant(
 
 @router.get("/users/{user_id}/plants", response_model=list[Plant])
 def get_plants_for_user(current_user: Annotated[User, Security(
-        auth.get_current_active_user)], skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+        auth.get_current_active_user)], user_id: int, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     plants = crud.get_plants_for_user(
         db, skip=skip, limit=limit, user_id=current_user.id)
     return plants
@@ -86,7 +88,7 @@ async def get_my_plants(
 def get_plant_details(
     plant_id: int, db: Session = Depends(get_db)
 ):
-    db_plant = crud.get_plant(db, plant_id=plant_id)
+    db_plant = crud.get_plant_details(db, plant_id=plant_id)
     if db_plant is None:
         raise HTTPException(status_code=404, detail="Plant not found")
     return db_plant
@@ -114,10 +116,10 @@ async def update_plant(
     plant = PlantCreate(name=name, description=description, category_id=category_id, plant_public=plant_public,
                         irrigation_type=irrigation_type, light_type=light_type, location=location, notes=notes, image_url=image_url)
 
-    db_plant = crud.get_plant(db, plant_id=plant_id)
+    db_plant = crud.get_plant_details(db, plant_id=plant_id)
     if db_plant is None:
         raise HTTPException(status_code=404, detail="Plant not found")
-    if user_id is not db_plant.owner_id:
+    if current_user.id is not db_plant.owner_id:
         raise HTTPException(status_code=500, detail="This is not your plant")
     if imagefile:
         # Verify a folder and sanitize filename
@@ -135,11 +137,13 @@ async def update_plant(
 
 
 @router.delete("/users/{user_id}/plants/{plant_id}", response_model=Plant)
-def delete_plant(user_id: int, plant_id: int, db: Session = Depends(get_db)
-                 ):
-    db_plant = crud.get_plant(db, plant_id=plant_id)
+def delete_plant(current_user: Annotated[User, Security(
+    auth.get_current_active_user)],
+    user_id: int, plant_id: int, db: Session = Depends(get_db)
+):
+    db_plant = crud.get_plant_details(db, plant_id=plant_id)
     if db_plant is None:
         raise HTTPException(status_code=404, detail="Plant not found")
-    if user_id is not db_plant.owner_id:
+    if current_user.id is not db_plant.owner_id:
         raise HTTPException(status_code=500, detail="This is not your plant")
     return crud.delete_user_plant_by_id(db=db, plant_id=plant_id)

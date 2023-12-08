@@ -4,48 +4,75 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, Security, UploadFile, File, Form, HTTPException
 from sqlalchemy.orm import Session
 from dependencies import get_db
-from schemas import Journal, JournalCreate
+from schemas import User, Journal, JournalCreate
 import crud
 import shutil
+import auth
 
 router = APIRouter(tags=["Journals"])
 
 
 @router.get("/users/{user_id}/plants/{plant_id}/journals/{journal_id}", response_model=Journal)
-def get_journal_details(
+def get_journal_details(current_user: Annotated[User, Security(
+        auth.get_current_active_user)],
+    user_id: int,
+    plant_id: int,
     journal_id: int, db: Session = Depends(get_db)
 ):
     db_journal = crud.get_journal(db, journal_id=journal_id)
+    db_plant = crud.get_plant_details(db, plant_id=plant_id)
     if db_journal is None:
         raise HTTPException(status_code=404, detail="Journal not found")
+    if db_plant is None:
+        raise HTTPException(status_code=404, detail="Plant not found")
+    if db_plant.owner_id != current_user.id:
+        raise HTTPException(status_code=403, detail="This is not your plant")
+    if user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="This is not your user")
     return db_journal
 
 
 @router.get("/users/{user_id}/plants/{plant_id}/journals", response_model=list[Journal])
-def get_journals_for_plant(plant_id: int, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+def get_journals_for_plant(current_user: Annotated[User, Security(
+    auth.get_current_active_user)],
+        user_id: int, plant_id: int, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    db_plant = crud.get_plant_details(db, plant_id=plant_id)
+    if db_plant is None:
+        raise HTTPException(status_code=404, detail="Plant not found")
+    if db_plant.owner_id != current_user.id:
+        raise HTTPException(status_code=403, detail="This is not your plant")
+    if user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="This is not your user")
     journals = crud.get_journals_for_plant(
         db, skip=skip, limit=limit, plant_id=plant_id)
     return journals
 
 
 @router.get("/users/{user_id}/journals", response_model=list[Journal])
-def get_journals_for_user(user_id: int, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+def get_journals_for_user(current_user: Annotated[User, Security(
+        auth.get_current_active_user)], user_id: int, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    if user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="This is not your user")
     journals = crud.get_journals_for_user(
         db, skip=skip, limit=limit, user_id=user_id)
     return journals
 
 
 @router.post("/users/{user_id}/plants/{plant_id}/addjournal", response_model=Journal, status_code=201)
-def create_journal_for_plant(
+def create_journal_for_plant(current_user: Annotated[User, Security(
+    auth.get_current_active_user)],
         user_id: int,
         plant_id: int,
         imagefile: Annotated[UploadFile,
                              File(..., description="Main image for your Journal")] = None,
         title: str = Form(...),
         description: str = Form(None), db: Session = Depends(get_db)):
-    db_plant = crud.get_plant(db, plant_id=plant_id)
+
+    db_plant = crud.get_plant_details(db, plant_id=plant_id)
     if db_plant is None:
         raise HTTPException(status_code=404, detail="Plant not found")
+    if user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="This is not your user")
     journal = JournalCreate(title=title, description=description)
     if imagefile:
         # create a folder with next id and sanitize filename
@@ -67,7 +94,8 @@ def create_journal_for_plant(
 
 
 @router.patch("/users/{user_id}/plants/{plant_id}/updatejournal/{journal_id}", response_model=Journal)
-def update_journal(
+def update_journal(current_user: Annotated[User, Security(
+    auth.get_current_active_user)],
         user_id: int,
         plant_id: int,
         journal_id: int,
@@ -77,9 +105,18 @@ def update_journal(
         description: str = Form(None),
         image_url: str = Form(None),
         db: Session = Depends(get_db)):
-    db_plant = crud.get_plant(db, plant_id=plant_id)
+
+    db_journal = crud.get_journal_details(db, journal_id=journal_id)
+    db_plant = crud.get_plant_details(db, plant_id=plant_id)
+
+    if db_journal is None:
+        raise HTTPException(status_code=404, detail="Journal not found")
     if db_plant is None:
         raise HTTPException(status_code=404, detail="Plant not found")
+    if db_plant.owner_id != current_user.id:
+        raise HTTPException(status_code=403, detail="This is not your plant")
+    if user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="This is not your user")
     journal = JournalCreate(
         title=title, description=description, image_url=image_url)
     if imagefile:
@@ -99,9 +136,18 @@ def update_journal(
 
 
 @router.delete("/users/{user_id}/plants/{plant_id}/journals/{journal_id}", response_model=Journal)
-def delete_journal(journal_id: int, db: Session = Depends(get_db)):
-    db_journal = crud.get_journal(db, journal_id=journal_id)
+def delete_journal(current_user: Annotated[User, Security(
+        auth.get_current_active_user)], user_id: int, plant_id: int, journal_id: int, db: Session = Depends(get_db)):
+
+    db_journal = crud.get_journal_details(db, journal_id=journal_id)
+    db_plant = crud.get_plant_details(db, plant_id=plant_id)
     if db_journal is None:
         raise HTTPException(status_code=404, detail="Journal not found")
+    if db_plant is None:
+        raise HTTPException(status_code=404, detail="Plant not found")
+    if db_plant.owner_id != current_user.id:
+        raise HTTPException(status_code=403, detail="This is not your plant")
+    if user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="This is not your user")
     db_journal = crud.delete_journal_by_id(db, journal_id=journal_id)
     return db_journal

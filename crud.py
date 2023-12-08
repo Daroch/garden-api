@@ -40,7 +40,7 @@ def delete_user_by_id(db: Session, user_id: int):
     return db_user
 
 
-def get_plant(db: Session, plant_id: int):
+def get_plant_details(db: Session, plant_id: int):
     return db.query(Plant).filter(Plant.id == plant_id).first()
 
 
@@ -78,7 +78,7 @@ def create_user_plant(db: Session, plant: PlantCreate, user_id: int):
 
 
 def update_user_plant(db: Session, plant_id: int, plant: PlantCreate):
-    db_plant = get_plant(db, plant_id=plant_id)
+    db_plant = get_plant_details(db, plant_id=plant_id)
     for key, value in plant:
         setattr(db_plant, key, value)
     db.commit()
@@ -116,7 +116,7 @@ def delete_category_by_id(db: Session, category_id: int):
     return db_category
 
 
-def get_journal(db: Session, journal_id: int):
+def get_journal_details(db: Session, journal_id: int):
     return db.query(Journal).filter(Journal.id == journal_id).first()
 
 
