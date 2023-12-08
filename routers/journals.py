@@ -58,6 +58,8 @@ def create_journal_for_plant(
         with open(folder + "/" + clean_name, "wb") as buffer:
             shutil.copyfileobj(imagefile.file, buffer)
         journal.image_url = clean_name
+    else:
+        journal.image_url = ""
 
     db_journal = crud.create_journal_plant(
         db=db, journal=journal, plant_id=plant_id)
@@ -90,6 +92,9 @@ def update_journal(
         with open(folder + "/" + clean_name, "wb") as buffer:
             shutil.copyfileobj(imagefile.file, buffer)
         journal.image_url = clean_name
+    else:
+        if journal.image_url == "null":
+            journal.image_url = ""
     return crud.update_journal_plant(db=db, journal_id=journal_id, journal=journal)
 
 

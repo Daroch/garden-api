@@ -49,6 +49,8 @@ async def create_plant(
         with open(folder + "/" + clean_name, "wb") as buffer:
             shutil.copyfileobj(imagefile.file, buffer)
         plant.image_url = clean_name
+    else:
+        plant.image_url = ""
 
     return crud.create_user_plant(db=db, plant=plant, user_id=user_id)
 
@@ -114,6 +116,9 @@ async def update_plant(
         with open(folder + "/" + clean_name, "wb") as buffer:
             shutil.copyfileobj(imagefile.file, buffer)
         plant.image_url = clean_name
+    else:
+        if plant.image_url == "null":
+            plant.image_url = ""
     return crud.update_user_plant(db=db, plant_id=plant_id, plant=plant)
 
 
