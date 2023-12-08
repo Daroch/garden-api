@@ -37,15 +37,6 @@ async def get_my_details(current_user: Annotated[User, Depends(auth.get_current_
     return current_user
 
 
-@router.get("/users/me/plants/", response_model=list[Plant])
-async def get_my_plants(
-    current_user: Annotated[User, Security(
-        auth.get_current_active_user)], db: Session = Depends(get_db)
-):
-    db_plants = crud.get_plants_for_user(db, current_user.id)
-    return db_plants
-
-
 @router.post("/users/", response_model=User, status_code=201)
 def create_user(user: UserCreate, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_email(db, email=user.email)

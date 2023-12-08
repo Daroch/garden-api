@@ -48,8 +48,18 @@ def get_plants(db: Session, skip: int = 0, limit: int = 100):
     return db.query(Plant).offset(skip).limit(limit).all()
 
 
-def get_plants_for_user(db: Session, user_id: int, skip: int = 0, limit: int = 100):
-    return db.query(Plant).filter(Plant.owner_id == user_id).offset(skip).limit(limit).all()
+def get_plants_for_user(db: Session, user_id: int, search_text: str = '', search_category_id: int = 0, skip: int = 0, limit: int = 100):
+    if search_category_id == 0:
+        return db.query(Plant).filter(Plant.owner_id == user_id).filter(Plant.name.ilike('%'+search_text+'%')).offset(skip).limit(limit).all()
+    else:
+        return db.query(Plant).filter(Plant.owner_id == user_id).filter(Plant.name.ilike('%'+search_text+'%')).filter(Plant.category_id == search_category_id).offset(skip).limit(limit).all()
+
+
+def get_all_plants_for_search(db: Session, search: str, search_category: int, skip: int = 0, limit: int = 100):
+    if search_category == 0:
+        return db.query(Plant).filter(Plant.name.ilike('%'+search+'%')).offset(skip).limit(limit).all()
+    else:
+        return db.query(Plant).filter(Plant.name.ilike('%'+search+'%')).filter(Plant.category_id == search_category).offset(skip).limit(limit).all()
 
 
 def get_plant_latest_id(db: Session):
