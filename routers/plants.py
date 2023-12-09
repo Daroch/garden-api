@@ -59,28 +59,21 @@ async def create_plant(
 
 @router.get("/users/{user_id}/plants", response_model=list[Plant])
 def get_plants_for_user(current_user: Annotated[User, Security(
-        auth.get_current_active_user)], user_id: int, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    plants = crud.get_plants_for_user(
-        db, skip=skip, limit=limit, user_id=current_user.id)
-    return plants
-
-
-@router.get("/plants", response_model=list[Plant])
-async def get_all_plants_for_search(
-    search_text: str = '', search_category_id: int = 0, db: Session = Depends(get_db)
+        auth.get_current_active_user)], user_id: int, search_text: str = '', search_category_id: int = 0, db: Session = Depends(get_db)
 ):
-    db_plants = crud.get_all_plants_for_search(
-        db, search_text, search_category_id)
+    if user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="This is not your user")
+    db_plants = crud.get_plants_for_user(
+        db, user_id, search_text, search_category_id)
     return db_plants
 
 
-@router.get("/users/me/plants/", response_model=list[Plant])
-async def get_my_plants(
-    current_user: Annotated[User, Security(
-        auth.get_current_active_user)], search_text: str = '', search_category_id: int = 0, db: Session = Depends(get_db)
+@router.get("/plants", response_model=list[Plant])
+async def get_all_plants_for_explore_search(
+    search_text: str = '', search_category_id: int = 0, db: Session = Depends(get_db)
 ):
-    db_plants = crud.get_plants_for_user(
-        db, current_user.id, search_text, search_category_id)
+    db_plants = crud.get_all_plants_for_explore_search(
+        db, search_text, search_category_id)
     return db_plants
 
 
