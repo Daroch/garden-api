@@ -47,7 +47,11 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
 
 
 @router.get("/users/", response_model=list[User])
-def get_all_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+def get_all_users(current_user: Annotated[User, Security(
+        auth.get_current_active_user)], skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    if current_user.name != "admin":
+        raise HTTPException(
+            status_code=403, detail="Only admin can delete Users")
     users = crud.get_users(db, skip=skip, limit=limit)
     return users
 
@@ -61,9 +65,13 @@ def get_user_details(user_id: int, db: Session = Depends(get_db)):
 
 
 @router.delete("/users/{user_id}", response_model=User)
-def delete_user(user_id: int, db: Session = Depends(get_db)):
+def delete_user(current_user: Annotated[User, Security(
+        auth.get_current_active_user)], user_id: int, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_id(db, user_id=user_id)
     if db_user is None:
         raise HTTPException(status_code=404, detail="User not found")
+    if current_user.name != "admin":
+        raise HTTPException(
+            status_code=403, detail="Only admin can delete Users")
     db_user = crud.delete_user_by_id(db, user_id=user_id)
     return db_user

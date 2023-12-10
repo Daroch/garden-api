@@ -14,11 +14,11 @@ from database import engine, SessionLocal
 
 models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
-celery = Celery(
-    __name__,
-    broker=settings.CELERY_BROKER_URL,
-    backend=settings.CELERY_RESULT_BACKEND
-)
+# celery = Celery(
+#     __name__,
+#     broker=settings.CELERY_BROKER_URL,
+#     backend=settings.CELERY_RESULT_BACKEND
+# )
 
 app.mount("/images",
           StaticFiles(directory="images"), name='images')
@@ -47,15 +47,15 @@ def root():
     return {"msg": "Hello, I am FastAPI"}
 
 
-@celery.task
-def send_push_notification(device_token: str):
-    time.sleep(10)  # simulates slow network call to firebase/sns
-    with open("notification.log", mode="a") as notification_log:
-        response = f"Successfully sent push notification to: {device_token}\n"
-        notification_log.write(response)
+# @celery.task
+# def send_push_notification(device_token: str):
+#     time.sleep(10)  # simulates slow network call to firebase/sns
+#     with open("notification.log", mode="a") as notification_log:
+#         response = f"Successfully sent push notification to: {device_token}\n"
+#         notification_log.write(response)
 
 
-@app.get("/push/{device_token}")
-async def notify(device_token: str):
-    send_push_notification.delay(device_token)
-    return {"message": "Notification sent"}
+# @app.get("/push/{device_token}")
+# async def notify(device_token: str):
+#     send_push_notification.delay(device_token)
+#     return {"message": "Notification sent"}

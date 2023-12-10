@@ -134,8 +134,7 @@ def get_alerts_to_send_email(current_user: Annotated[User, Security(
 
 
 @router.get("/send_alerts_to_email")
-def send_alerts_to_email(current_user: Annotated[User, Security(
-        auth.get_current_active_user)], db: Session = Depends(get_db)):
+def send_alerts_to_email(db: Session = Depends(get_db)):
     # db_user = crud.get_user_by_id(db, user_id=current_user.id)
     # if db_user.email != "alvaro@abacocreacion.com":
     #     raise HTTPException(status_code=404, detail="Access denied")
