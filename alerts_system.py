@@ -1,6 +1,7 @@
 import os
 import ssl
 import smtplib
+import logging
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import datetime, timedelta
@@ -14,6 +15,7 @@ from crud import get_alerts_to_send_email, update_alert_plant
 EMAIL_USERNAME = os.getenv('EMAIL_USERNAME')
 EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
 # print(EMAIL_USERNAME)
+#
 
 
 def send_email(email, subject, message_body):
@@ -37,6 +39,11 @@ def send_email(email, subject, message_body):
         smtp.login(sender, password)
         smtp.sendmail(sender, receiver, mensaje.as_string())
 
+    # logged message in a file when message is sent
+    # The file is save in "/images" folder because is persistent disk on render.com
+    logging.basicConfig(format='%(asctime)s-%(levelname)s:%(message)s',
+                        filename='images/alerts_sends.log', encoding='utf-8', level=logging.INFO)
+    logging.info('Alerta enviada a ' + email)
     print('Correo electrónico enviado exitosamente')
 
 
@@ -59,7 +66,7 @@ def send_alert(db: Session, alert_id: int):
     email_alert_text_repeat = "Es una alerta periódica, con frecuencia de " + str(alert_frecuency) + " días." +\
         "El próximo aviso será el " + str(alert_start_date) + "."
 
-    email_alert_message = "Hola " + username + ",\n\n" + "Tienes una alerta de " + \
+    email_alert_message = "Hola " + str(username) + ",\n\n" + "Tienes una alerta de " + \
         alert_typename + " para tu planta: " + plant_name + ",\n" + \
         alert_title + "\n" + alert_notes + "\n\n"
 
