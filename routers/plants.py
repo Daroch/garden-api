@@ -69,12 +69,11 @@ def get_plants_for_user(current_user: Annotated[User, Security(
 
 
 @router.get("/plants", response_model=list[Plant])
-async def get_all_plants_for_explore_search(current_user: Annotated[User, Security(
-        auth.get_current_active_user)],
+async def get_all_plants_for_explore_search(user_id:int,
     search_text: str = '', search_category_id: int = 0, db: Session = Depends(get_db)
 ):
     db_plants = crud.get_all_plants_for_explore_search(
-        db, current_user.id, search_text, search_category_id)
+        db, user_id, search_text, search_category_id)
     return db_plants
 
 
