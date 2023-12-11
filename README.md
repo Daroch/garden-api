@@ -18,6 +18,7 @@ Notice of irrigation, fertilization, anti-pest, sowing, harvesting, transplant t
 ## Additional features
 
 - Search engine in the app, which shows results, filtering by plant name, climate, (other fields), whether it is public, and allows cloning the plant to our garden, with its recommended data (in principle without cloning the photos). → Add your photos to your new plant!
+
 ## To do in Future Release
 
 - Possibility of seeing all the plants of a user (if they are public)
@@ -55,12 +56,14 @@ Best practices
 - UML Diagrams
 
 ---
+
 ### UML DIAGRAMS
+
 **Use Case**
-![Use Case](<githubimages/plants manager Use Case diagram.png>)
+![Use Case](<uml-images/plants manager Use Case diagram.png>)
 
 **Activity Diagram**
-![Alt text](<githubimages/Garden App Activity diagram.png>)
+![Alt text](<uml-images/Garden App Activity diagram.png>)
 
 **Class Diagram**
-![Alt text](<githubimages/Garden Manager Class diagram.png>)
+![Alt text](<uml-images/Garden Manager Class diagram.png>)

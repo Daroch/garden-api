@@ -1,4 +1,5 @@
 # garden-api
+
 Garden Api development in Python to Devcamp Capstone Project to work with Garden App
 
 El objetivo de la aplicación es poder realizar un seguimiento a nuestras plantas, bien sean plantas ornamentales en casa o distintos cultivos en una huerta.
@@ -53,12 +54,14 @@ Best practiques
 - UML Diagrams with Modelio
 
 ---
+
 ### UML DIAGRAMS
+
 **Use Case**
-![Use Case](<githubimages/plants manager Use Case diagram.png>)
+![Use Case](<uml-images/plants manager Use Case diagram.png>)
 
 **Activity Diagram**
-![Alt text](<githubimages/Garden App Activity diagram.png>)
+![Alt text](<uml-images/Garden App Activity diagram.png>)
 
 **Class Diagram**
-![Alt text](<githubimages/Garden Manager Class diagram.png>)
+![Alt text](<uml-images/Garden Manager Class diagram.png>)
