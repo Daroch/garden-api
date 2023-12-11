@@ -19,7 +19,7 @@ def get_journal_details(current_user: Annotated[User, Security(
     plant_id: int,
     journal_id: int, db: Session = Depends(get_db)
 ):
-    db_journal = crud.get_journal(db, journal_id=journal_id)
+    db_journal = crud.get_journal_details(db, journal_id=journal_id)
     db_plant = crud.get_plant_details(db, plant_id=plant_id)
     if db_journal is None:
         raise HTTPException(status_code=404, detail="Journal not found")

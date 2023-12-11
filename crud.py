@@ -144,7 +144,7 @@ def create_journal_plant(db: Session, journal: JournalCreate, plant_id: int):
 
 
 def update_journal_plant(db: Session, journal_id: int, journal: JournalCreate):
-    db_journal = get_journal(db, journal_id=journal_id)
+    db_journal = get_journal_details(db, journal_id=journal_id)
     for key, value in journal:
         setattr(db_journal, key, value)
     db.commit()
