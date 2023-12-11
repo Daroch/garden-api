@@ -55,10 +55,10 @@ Best practiques
 ---
 ### UML DIAGRAMS
 **Use Case**
-![Use Case](<images/plants manager Use Case diagram.png>)
+![Use Case](<githubimages/plants manager Use Case diagram.png>)
 
 **Activity Diagram**
-![Alt text](<images/Garden App Activity diagram.png>)
+![Alt text](<githubimages/Garden App Activity diagram.png>)
 
 **Class Diagram**
-![Alt text](<images/Garden Manager Class diagram.png>)
+![Alt text](<githubimages/Garden Manager Class diagram.png>)
